@@ -5,8 +5,6 @@ k::usage = "k[i] is the momentum of the i-th leg of the vertex";
 c::usage = "c[i] is the i-th color index";
 mu::usage = "mu[i] is the i-th external (A) Lorentz index";
 rho::usage = "rho[i] is the i-th Lorentz index to be summed over";
-Cexp::usage = 
-   "Cexp[k[i],r] is the notation for Exp[I k[i].r] (component r of k[i])";
 (* Print without new-line *)
 PrintString[a__] := WriteString[$Output, a];
 (* Output formats *)
@@ -26,28 +24,16 @@ Format[af[i_]] := Subscripted[af[i]];
 Format[fmu[i_]] := Subscripted[fmu[i]];
 Format[frho[i_]] := Subscripted[frho[i]];
 Format[fnu[i_]] := Subscripted[fnu[i]];
-Format[Cexp[x_,y_]] := ColumnForm[{"_",x},Left,Center][y];
-Format[Cexp[-x_,y_]] := ColumnForm[{"_*",x},Left,Center][y];
-(* Format[Cexp[x_,y_]] := E^(I x y); *)
-(* Antisymmetric structure constants *)
-f::usage = 
-"f[a,b,c] are the antisymmetric structure constants";
-f[___,a_,___,a_,___] =0; 
-f[args__] := (Signature[{args}] (f @@ Sort[{args}]) /;  !OrderedQ[{args}] );
+
 (* Antisymmetric Ricci tensor *)
 epsilon::usage = 
 "epsilon[mu,nu,rho,sigma] is the Ricci tensor";
 epsilon[___,a_,___,a_,___] := 0; 
 epsilon[args__] := 
    (Signature[{args}] (epsilon @@ Sort[{args}]) /; !OrderedQ[{args}] );
-spur::usage = "spur[a,b,c...] = Tr[T[a]*T[b]*T[c]...]";
-(* Ciclicity of spur[a,b,c...] = Tr[T[a]*T[b]*T[c]...] *)
-spur [a_, x___, b_, y___] := 
-      spur [b, y, a, x] /; !OrderedQ[{a,b}];
+
 (* Symmetric delta operators *)
 delm::usage = "delm is the Cronecker delta for Lorentz indices";
-delc::usage = "delc is the Cronecker delta for color indices";
-SetAttributes[delc, Orderless];
 delm[] = 1;
 delm[_] := 1;
 (* DANGEROUS: "Collect" gives wrong results with this:

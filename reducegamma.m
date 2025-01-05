@@ -1,46 +1,47 @@
-(* The function reducegamma reduces the gamma matrices appearing in dtraces and gtraces by using the following identity: slash[p]*slash[p] = sisq[p].
- NOTE: The function uses internally the functions makeslash and unmakeslash. Thus, the input and output do not depend on slash. *)
+(* This function operates on a sum of terms, each of which is a product.
+   For each term, which may contain up to one "dtrace", it checks all pairs of 
+   consecutive indices of gamma matrices: If the rest of the term is symmetric
+   under the interchange of a pair of two consecutive indices, then the term 
+   gets multiplied by a Kronecker delta of these two indices *)
 
-reducegamma[expr_Plus]:= reducegamma /@ expr
-  
-reducegamma[expr_]:= unmakeslash[reducegamma1[makeslash[expr]]]
+reducegammaproductDirac[a_] := 
+  Module[{expr = If[Head[a]===Plus, List@@a, {a}], expr2,imax,productDiraclengths},
+         expr = {# /. productDirac[__]->1, (# / (# /. productDirac[__]->1)) // Rationalize}& /@ expr;
+         productDiraclengths = Union[Length /@ Select[Variables[expr],Head[#]===productDirac&]];
+         imax = If[productDiraclengths === {}, 0, productDiraclengths[[-1]] - 2];
+         Do[expr2 = 
+              Table[{If[Length[expr[[j,2]]]>i+2 && 
+                        !(FreeQ[expr[[j,2,i+1]],rho]) && 
+                        !(FreeQ[expr[[j,2,i+2]],rho]) && 
+                        (Length[Position[expr[[j,2]],expr[[j,2,i+1]]]] + 
+                         Length[Position[expr[[j,2]],expr[[j,2,i+2]]]] == 2) &&
+                        SameQ[expr[[j,1]], expr[[j,1]] /. {expr[[j,2,i+1]]->expr[[j,2,i+2]],
+                                                           expr[[j,2,i+2]]->expr[[j,2,i+1]]}],
+                        expr[[j,1]] delm[expr[[j,2,i+1]],expr[[j,2,i+2]]], 
+                        expr[[j,1]]],
+                     expr[[j,2]]},
+                    {j,Length[expr]}]; 
+            expr = expr2, {i,imax-1}]; 
+         Plus @@ ((Times @@ #)& /@ expr)]
 
-reducegamma1[expr_Times]:= reducegamma1 /@ expr
-  
-reducegamma1[dtrace[a___,slash[p_],slash[p_],b___]]:=reducegamma1[dtrace[a,b]]*
-                                                     sisq[p]
-  
-reducegamma1[gtrace[a___,slash[p_],slash[p_],b___]]:=reducegamma1[gtrace[a,b]]*
-                                                     sisq[p]
-  
-reducegamma1[expr_]:= expr
 
-(* The function applyWI applies WI of the form:
-     spash[p]*slash[-p+k]*slash[k] = -sisq[p]*slash[k] + slash[p]*sisq[k]
-   and similar relations.
-   NOTE: The function uses internally the functions makeslash and unmakeslash. Thus, the input and output do not depend on slash.*)
-
-applyWI[expr_]:= unmakeslash[Expand[makeslash[expr] //.
-        dtrace[a___,slash[p1_],slash[p2_],slash[p3_],b___] :>
-  Which[SameQ[p2,Expand[-p1+p3]],-dtrace[a,slash[p3],b]*sisq[p1] +
-	                          dtrace[a,slash[p1],b]*sisq[p3],
-	SameQ[p2,Expand[p1+p3]], dtrace[a,slash[p3],b]*sisq[p1] +
-				  dtrace[a,slash[p1],b]*sisq[p3],
-	SameQ[p2,Expand[p1-p3]], dtrace[a,slash[p3],b]*sisq[p1] -
-	                          dtrace[a,slash[p1],b]*sisq[p3],
-	SameQ[p2,Expand[-p1-p3]],-dtrace[a,slash[p3],b]*sisq[p1] -
-	                          dtrace[a,slash[p1],b]*sisq[p3],
-			True,dtrace[a,slashHIDE[p1],slash[p2],slash[p3],b]] //.
-	gtrace[a___,slash[p1_],slash[p2_],slash[p3_],b___] :>
-  Which[SameQ[p2,Expand[-p1+p3]],-gtrace[a,slash[p3],b]*sisq[p1] +
-	                         gtrace[a,slash[p1],b]*sisq[p3],
-	SameQ[p2,Expand[p1+p3]], gtrace[a,slash[p3],b]*sisq[p1] +
-	                         gtrace[a,slash[p1],b]*sisq[p3],
-	SameQ[p2,Expand[p1-p3]], gtrace[a,slash[p3],b]*sisq[p1] -
-	                         gtrace[a,slash[p1],b]*sisq[p3],
-	SameQ[p2,Expand[-p1-p3]],-gtrace[a,slash[p3],b]*sisq[p1] -
-	                         gtrace[a,slash[p1],b]*sisq[p3],
-			True,gtrace[a,slashHIDE[p1],slash[p2],slash[p3],b]] /.
-	slashHIDE -> slash]]
-					 
-  
+reducegammatraceDirac[a_] := 
+  Module[{expr = If[Head[a]===Plus, List@@a, {a}], expr2,imax,traceDiraclengths},
+	 expr = {# /. b_. traceDirac[__] :> b, #}& /@ expr;
+         expr = {#[[1]], #[[2]]/#[[1]] // Rationalize } & /@ expr;
+         traceDiraclengths = Union[Length /@ Select[Variables[expr],Head[#]===traceDirac&]];
+         imax = If[traceDiraclengths === {}, 0, traceDiraclengths[[-1]] ];
+         Do[expr2 = 
+              Table[{If[Length[expr[[j,2]]]>i && 
+                        !(FreeQ[expr[[j,2,i]],rho]) && 
+                        !(FreeQ[expr[[j,2,i+1]],rho]) && 
+                        (Length[Position[expr[[j,2]],expr[[j,2,i]]]] + 
+                         Length[Position[expr[[j,2]],expr[[j,2,i+1]]]] == 2) &&
+                        SameQ[expr[[j,1]], expr[[j,1]] /. {expr[[j,2,i]]->expr[[j,2,i+1]],
+                                                           expr[[j,2,i+1]]->expr[[j,2,i]]}],
+                        expr[[j,1]] delm[expr[[j,2,i]],expr[[j,2,i+1]]], 
+                        expr[[j,1]]],
+                     expr[[j,2]]},
+                    {j,Length[expr]}]; 
+            expr = expr2, {i,imax-1}]; 
+         Plus @@ ((Times @@ #)& /@ expr)]

@@ -1,0 +1,1949 @@
+Mathematica 12.3.1 Kernel for Mac OS X x86 (64-bit)
+Copyright 1988-2021 Wolfram Research, Inc.
+
+In[1]:= 
+Out[1]= {stdout}
+
+In[2]:= << /Users/marios/latt_pert/Fedila/input.m
+Reading commands to make vertices.
+Reading commands for contractions.
+Reading commands to symmetrize the vertices over identical fields.
+Reading commands to symplify contractions in Lorentz indices.
+Reading commands for canonical forms and to count factors.
+Reading commands to simplify SU(Nc) generators.
+Reading commands for replacements and reordering.
+Reading commands to reduce the indices.
+Reading commands to reduce gamma matrices.
+Reading commands to collect.
+Reading commands for trigonometric manipulations.
+Reading commands for extraction of the external momenta.
+Substitutions/results of primitive lattice divergent integrals.
+Both Continuum and lattice divergent integrals
+appear in the list: IntegralsResults
+Reading integrator routine:--------------------------
+Metacode for converting integrands into Fortran code.
+Reading commands for extrapolation to infinite lattice size.
+Reading commands for continuum Perturbation Theory and GIRS.
+
+In[3]:= makestoutvertexU[1,0] /. w -> 0 ;
+
+In[4]:= 1/2 dtrace[fmu[2],mu[1],fmu[3]] * (% * phi2[2k[3], mu[1]] - (% * phi2[-2k[2], mu[1]] /. 
+                            im g -> -im g)) + 
+        (-r/2)* dtrace[fmu[2],fmu[3]] (% * phi2[2k[3], mu[1]] + (% * phi2[-2k[2], mu[1]] /. 
+                            im g -> -im g)) ;
+
+In[5]:= % /. phi2[a_,b_]*phi2[c_,b_] :> phi2[a+c,b] ;
+
+In[6]:= % /. delta[k[1]-k[2]+k[3]] phi2[k[1]+a_,b_] :> delta[k[1]-k[2]+k[3]] phi2[k[2]-k[3]+a,b] ;
+
+In[7]:= % /. phi2[a_,b_] :> c2[a,b] + im s2[a,b] ;
+
+In[8]:= (Expand[%] /. im^2 -> -1) // canonical // simplifydelm
+
+Out[8]= g im c2[k  + k , mu ] delta[k  - k  + k ] dtrace[fmu , mu , fmu ] 
+                 2    3    1         1    2    3            2    1     3
+ 
+>     openspur[cf , c , cf ] + g r delta[k  - k  + k ] dtrace[fmu , fmu ] 
+                 2   1    3               1    2    3            2     3
+ 
+>     openspur[cf , c , cf ] s2[k  + k , mu ]
+                 2   1    3      2    3    1
+
+In[9]:= Vertex[value] = { {1, 0, 0, 0, 1, 1, 0, 0, 0, 0}, %} ;
+
+In[10]:= contract[{Vertex[value],Vertex[value]},
+{{0,1},{1,0}},
+{{0,0},{0,0}},
+{{0,0},{0,0}},{{0,0},{0,0}},{{0,0},{0,0}},
+{{0,1},{0,0}},
+{{0,0},{0,0}},{{0,0},{0,0}}] ;
+
+In[11]:= (% /. openspur -> productGen /. spur -> traceGen) // colorExpand ;
+
+In[12]:= Expand[%] //. im^i_ :> -im^(i-2) ;
+
+In[13]:= Variables[%] // Sort
+
+Out[13]= {g, im, Nc, r, c2[p  + q , rho ], c2[p  + q , rho ], 
+                            2    1     2       2    2     1
+ 
+>    delta[-p  + p  - q ], delta[p  - p  + q ], dtrace[fnu , frho ], 
+             1    2    1          1    2    2             1      2
+ 
+>    dtrace[frho , fnu ], dtrace[fnu , rho , frho ], 
+                1     2             1     2      2
+ 
+>    dtrace[frho , rho , fnu ], productGen[af , af ], prop[p , rho , rho ], 
+                1     1     2                1    2         1     1     2
+ 
+>    propF[p , frho , frho , rho ], s2[p  + q , rho ], s2[p  + q , rho ]}
+            2      1      2     3       2    1     2       2    2     1
+
+In[14]:= (#/(# /. delta[__]->1 ))& /@ List @@ %% // Union
+
+Out[14]= {delta[-p  + p  - q ] delta[p  - p  + q ]}
+                  1    2    1         1    2    2
+
+In[15]:= Expand[%%%] /. f_ delta[a_ + b_. p[2]] :>
+(replace[(f delta[a + b p[2]]),{p[2], -a/b}]) // canonical;
+
+In[16]:= (#/(# /. delta[__]->1 ))& /@ List @@ % // Union
+
+Out[16]= {delta[0] delta[-q  + q ]}
+                           1    2
+
+In[17]:= replace[Expand[%%], {q[2],q[1]}] /. delta[0] -> 1 ;
+
+In[18]:= canonical[%];
+
+In[19]:= Variables[%] // Sort
+
+Out[19]= {g, im, Nc, r, c2[p  + 2 q , rho ], c2[p  + 2 q , rho ], 
+                            1      1     1       1      1     2
+ 
+>    dtrace[fnu , frho ], dtrace[frho , fnu ], dtrace[fnu , rho , frho ], 
+               1      2              1     2             1     2      2
+ 
+>    dtrace[frho , rho , fnu ], productGen[af , af ], prop[p , rho , rho ], 
+                1     1     2                1    2         1     1     2
+ 
+>    propF[p  + q , frho , frho , rho ], s2[p  + 2 q , rho ], 
+            1    1      1      2     3       1      1     1
+ 
+>    s2[p  + 2 q , rho ]}
+         1      1     2
+
+In[20]:= (#/(# /. dtrace[__]->1 /. propF[___] -> 1))& /@ List @@ %% // Union
+
+Out[20]= {dtrace[fnu , frho ] dtrace[frho , fnu ] 
+                    1      2             1     2
+ 
+>     propF[p  + q , frho , frho , rho ], 
+             1    1      1      2     3
+ 
+>    dtrace[frho , fnu ] dtrace[fnu , rho , frho ] 
+                1     2            1     2      2
+ 
+>     propF[p  + q , frho , frho , rho ], 
+             1    1      1      2     3
+ 
+>    dtrace[fnu , frho ] dtrace[frho , rho , fnu ] 
+               1      2             1     1     2
+ 
+>     propF[p  + q , frho , frho , rho ], 
+             1    1      1      2     3
+ 
+>    dtrace[fnu , rho , frho ] dtrace[frho , rho , fnu ] 
+               1     2      2             1     1     2
+ 
+>     propF[p  + q , frho , frho , rho ]}
+             1    1      1      2     3
+
+In[21]:= %%% /.
+propF[a_, b_, c_, d_] :>
+fhat[a,m] ((-m + 2 r s2sq[a]) dtrace[c, b] - im dtrace[c, d, b] s2[2 a, d]) /.
+prop[a_, b_, c_] :> hat2[a] (delm[b, c] - 4 beta hat2[a] s2[a, b] s2[a, c]) /.
+propG[a_] :> hat2[a] /.
+propA[a_] :> hat2[a, m] /.
+propg[a_, b_, c_, d_] :> 2 fhat[a] ( 2 r s2sq[a] dtrace[c, b] - im dtrace[c, d, b] s2[2 a, d]) ;
+
+In[22]:= Expand[%] //. dtrace[a__, i_]*dtrace[i_, b__] :> dtrace[a, b] ;
+
+In[23]:= (#/(# /. dtrace[__]->1 ))& /@ List @@ % // Union
+
+Out[23]= {dtrace[fnu , fnu ], dtrace[fnu , rho , fnu ], 
+                    1     2             1     1     2
+ 
+>    dtrace[fnu , rho , fnu ], dtrace[fnu , rho , fnu ], 
+               1     2     2             1     3     2
+ 
+>    dtrace[fnu , rho , rho , fnu ], dtrace[fnu , rho , rho , fnu ], 
+               1     2     1     2             1     2     3     2
+ 
+>    dtrace[fnu , rho , rho , fnu ], dtrace[fnu , rho , rho , rho , fnu ]}
+               1     3     1     2             1     2     3     1     2
+
+In[24]:= Expand[%%] /.
+{dtrace -> productDirac,
+gtrace -> traceDirac} ;
+
+In[25]:= % //. productDiracRules4dim //. traceDiracRules4dim;
+
+In[26]:= (Expand[%] // simplifydelm) //reducerho // rorder ;
+
+In[27]:= % // reducegammaproductDirac // reducegammatraceDirac;
+
+In[28]:= lb[%]
+
+Out[28]= {52, 110840}
+
+In[29]:= Expand[%%] //. productDiracRules4dim //. traceDiracRules4dim;
+
+In[30]:= (Expand[%] // simplifydelm) //reducerho // rorder ;
+
+In[31]:= Variables[%] // Sort
+
+Out[31]= {beta, g, im, m, Nc, r, c2[p  + 2 q , rho ], c2[p  + 2 q , rho ], 
+                                     1      1     1       1      1     2
+ 
+>    fhat[p  + q , m], hat2[p ], productDirac[fnu , fnu ], 
+           1    1            1                   1     2
+ 
+>    productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                     1     1     2                   1     2     2
+ 
+>    productDirac[fnu , rho , fnu ], productDirac[fnu , rho , rho , fnu ], 
+                     1     3     2                   1     1     1     2
+ 
+>    productDirac[fnu , rho , rho , rho , fnu ], productGen[af , af ], 
+                     1     1     1     2     2                1    2
+ 
+>    s2[p , rho ], s2[p , rho ], s2[2 (p  + q ), rho ], 
+         1     1       1     2          1    1      1
+ 
+>    s2[2 (p  + q ), rho ], s2[2 (p  + q ), rho ], s2[p  + 2 q , rho ], 
+            1    1      2          1    1      3       1      1     1
+ 
+>    s2[p  + 2 q , rho ], s2sq[p  + q ]}
+         1      1     2         1    1
+
+In[32]:= bl[%]
+
+Out[32]= {{0, 0, 0, 0, 0, 0, 376, 376, 240, 112, 184, 256, 256, 256, 328, 
+ 
+>     400, 184, 184, 184, 376, 376, 376, 376, 376, 232}, 
+ 
+>    {0, 0, 0, 0, 0, 0, 2, 2, 2, 1, 2, 3, 3, 3, 4, 5, 2, 2, 2, 2, 2, 2, 2, 2, 
+ 
+>     1}}
+
+In[33]:= (Expand[%%%] // simplifydelm // reducerho) //.
+productDiracRules4dim //. traceDiracRules4dim // simplifydelm // reducerho;
+
+In[34]:= {lb[%], Variables[%] // Sort}
+
+Out[34]= {{40, 83624}, {beta, g, im, m, Nc, r, c2[p  + 2 q , rho ], 
+                                                   1      1     1
+ 
+>     c2[p  + 2 q , rho ], fhat[p  + q , m], hat2[p ], 
+          1      1     2         1    1            1
+ 
+>     productDirac[fnu , fnu ], productDirac[fnu , rho , fnu ], 
+                      1     2                   1     1     2
+ 
+>     productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                      1     2     2                   1     3     2
+ 
+>     productGen[af , af ], s2[p , rho ], s2[p , rho ], 
+                   1    2       1     1       1     2
+ 
+>     s2[2 (p  + q ), rho ], s2[2 (p  + q ), rho ], s2[2 (p  + q ), rho ], 
+             1    1      1          1    1      2          1    1      3
+ 
+>     s2[p  + 2 q , rho ], s2[p  + 2 q , rho ], s2sq[p  + q ]}}
+          1      1     1       1      1     2         1    1
+
+In[35]:= collect[%%, {fhat[_,_], hat2[_]}]
+
+Out[35]= fhat[p  + q , m] (hat2[p ] 
+               1    1            1
+ 
+           1    2                      2
+>       (-(-) (g  m c2[p  + 2 q , rho ]  productDirac[fnu , fnu ] 
+           2            1      1     1                   1     2
+ 
+>             productGen[af , af ]) / Nc + 
+                           1    2
+ 
+            2                         2
+>         (g  m Nc c2[p  + 2 q , rho ]  productDirac[fnu , fnu ] 
+                       1      1     1                   1     2
+ 
+>            productGen[af , af ]) / 2 - 
+                          1    2
+ 
+            2                       2
+>         (g  im c2[p  + 2 q , rho ]  productDirac[fnu , rho , fnu ] 
+                     1      1     1                   1     1     2
+ 
+>            productGen[af , af ] s2[2 (p  + q ), rho ]) / Nc + 
+                          1    2         1    1      1
+ 
+           2                          2
+>         g  im Nc c2[p  + 2 q , rho ]  productDirac[fnu , rho , fnu ] 
+                       1      1     1                   1     1     2
+ 
+>          productGen[af , af ] s2[2 (p  + q ), rho ] + 
+                        1    2         1    1      1
+ 
+            2                       2
+>         (g  im c2[p  + 2 q , rho ]  productDirac[fnu , rho , fnu ] 
+                     1      1     1                   1     2     2
+ 
+>            productGen[af , af ] s2[2 (p  + q ), rho ]) / (2 Nc) - 
+                          1    2         1    1      2
+ 
+            2                          2
+>         (g  im Nc c2[p  + 2 q , rho ]  productDirac[fnu , rho , fnu ] 
+                        1      1     1                   1     2     2
+ 
+>            productGen[af , af ] s2[2 (p  + q ), rho ]) / 2 + 
+                          1    2         1    1      2
+ 
+            2
+>         (g  im m r c2[p  + 2 q , rho ] productDirac[fnu , rho , fnu ] 
+                         1      1     1                  1     1     2
+ 
+>            productGen[af , af ] s2[p  + 2 q , rho ]) / Nc - 
+                          1    2      1      1     1
+ 
+           2
+>         g  im m Nc r c2[p  + 2 q , rho ] productDirac[fnu , rho , fnu ] 
+                           1      1     1                  1     1     2
+ 
+>          productGen[af , af ] s2[p  + 2 q , rho ] + 
+                        1    2      1      1     1
+ 
+            2   2
+>         (g  im  r c2[p  + 2 q , rho ] productDirac[fnu , fnu ] 
+                        1      1     1                  1     2
+ 
+>            productGen[af , af ] s2[2 (p  + q ), rho ] s2[p  + 2 q , rho ])\
+                          1    2         1    1      1      1      1     1
+ 
+                    2   2
+>           / Nc - g  im  Nc r c2[p  + 2 q , rho ] productDirac[fnu , fnu ] 
+                                   1      1     1                  1     2
+ 
+>          productGen[af , af ] s2[2 (p  + q ), rho ] s2[p  + 2 q , rho ] + 
+                        1    2         1    1      1      1      1     1
+ 
+            2    2
+>         (g  m r  productDirac[fnu , fnu ] productGen[af , af ] 
+                                   1     2               1    2
+ 
+                                2
+>            s2[p  + 2 q , rho ] ) / (2 Nc) - 
+                 1      1     1
+ 
+            2       2
+>         (g  m Nc r  productDirac[fnu , fnu ] productGen[af , af ] 
+                                      1     2               1    2
+ 
+                                2
+>            s2[p  + 2 q , rho ] ) / 2 + 
+                 1      1     1
+ 
+            2     2
+>         (g  im r  productDirac[fnu , rho , fnu ] productGen[af , af ] 
+                                    1     1     2               1    2
+ 
+                                                      2
+>            s2[2 (p  + q ), rho ] s2[p  + 2 q , rho ] ) / (2 Nc) - 
+                    1    1      1      1      1     2
+ 
+            2        2
+>         (g  im Nc r  productDirac[fnu , rho , fnu ] productGen[af , af ] 
+                                       1     1     2               1    2
+ 
+                                                      2
+>            s2[2 (p  + q ), rho ] s2[p  + 2 q , rho ] ) / 2 + 
+                    1    1      1      1      1     2
+ 
+            2                      2
+>         (g  r c2[p  + 2 q , rho ]  productDirac[fnu , fnu ] 
+                    1      1     1                   1     2
+ 
+>            productGen[af , af ] s2sq[p  + q ]) / Nc - 
+                          1    2        1    1
+ 
+           2                         2
+>         g  Nc r c2[p  + 2 q , rho ]  productDirac[fnu , fnu ] 
+                      1      1     1                   1     2
+ 
+>          productGen[af , af ] s2sq[p  + q ] - 
+                        1    2        1    1
+ 
+              2     2
+>         (2 g  im r  c2[p  + 2 q , rho ] productDirac[fnu , rho , fnu ] 
+                          1      1     1                  1     1     2
+ 
+>            productGen[af , af ] s2[p  + 2 q , rho ] s2sq[p  + q ]) / Nc + 
+                          1    2      1      1     1        1    1
+ 
+             2        2
+>         2 g  im Nc r  c2[p  + 2 q , rho ] productDirac[fnu , rho , fnu ] 
+                            1      1     1                  1     1     2
+ 
+>          productGen[af , af ] s2[p  + 2 q , rho ] s2sq[p  + q ] - 
+                        1    2      1      1     1        1    1
+ 
+            2  3
+>         (g  r  productDirac[fnu , fnu ] productGen[af , af ] 
+                                 1     2               1    2
+ 
+                                2
+>            s2[p  + 2 q , rho ]  s2sq[p  + q ]) / Nc + 
+                 1      1     1         1    1
+ 
+           2     3
+>         g  Nc r  productDirac[fnu , fnu ] productGen[af , af ] 
+                                   1     2               1    2
+ 
+                              2
+>          s2[p  + 2 q , rho ]  s2sq[p  + q ]) + 
+               1      1     1         1    1
+ 
+               2           2                      2
+>      hat2[p ]  ((2 beta g  m c2[p  + 2 q , rho ]  productDirac[fnu , fnu ] 
+             1                     1      1     1                   1     2
+ 
+                                              2
+>            productGen[af , af ] s2[p , rho ] ) / Nc - 
+                          1    2      1     1
+ 
+                  2                         2
+>         2 beta g  m Nc c2[p  + 2 q , rho ]  productDirac[fnu , fnu ] 
+                             1      1     1                   1     2
+ 
+                                            2
+>          productGen[af , af ] s2[p , rho ]  + 
+                        1    2      1     1
+ 
+                   2
+>         (4 beta g  im c2[p  + 2 q , rho ] c2[p  + 2 q , rho ] 
+                            1      1     1      1      1     2
+ 
+>            productDirac[fnu , rho , fnu ] productGen[af , af ] s2[p , rho ] 
+                             1     2     2               1    2      1     1
+ 
+>            s2[p , rho ] s2[2 (p  + q ), rho ]) / Nc - 
+                 1     2         1    1      1
+ 
+                  2
+>         4 beta g  im Nc c2[p  + 2 q , rho ] c2[p  + 2 q , rho ] 
+                              1      1     1      1      1     2
+ 
+>          productDirac[fnu , rho , fnu ] productGen[af , af ] s2[p , rho ] 
+                           1     2     2               1    2      1     1
+ 
+>          s2[p , rho ] s2[2 (p  + q ), rho ] - 
+               1     2         1    1      1
+ 
+                   2                       2
+>         (2 beta g  im c2[p  + 2 q , rho ]  productDirac[fnu , rho , fnu ] 
+                            1      1     1                   1     2     2
+ 
+                                              2
+>            productGen[af , af ] s2[p , rho ]  s2[2 (p  + q ), rho ]) / Nc + 
+                          1    2      1     1          1    1      2
+ 
+                  2                          2
+>         2 beta g  im Nc c2[p  + 2 q , rho ]  productDirac[fnu , rho , fnu ] 
+                              1      1     1                   1     2     2
+ 
+                                            2
+>          productGen[af , af ] s2[p , rho ]  s2[2 (p  + q ), rho ] - 
+                        1    2      1     1          1    1      2
+ 
+                   2
+>         (4 beta g  im m r c2[p  + 2 q , rho ] 
+                                1      1     1
+ 
+>            productDirac[fnu , rho , fnu ] productGen[af , af ] s2[p , rho ] 
+                             1     1     2               1    2      1     1
+ 
+>            s2[p , rho ] s2[p  + 2 q , rho ]) / Nc + 
+                 1     2      1      1     2
+ 
+                  2
+>         4 beta g  im m Nc r c2[p  + 2 q , rho ] 
+                                  1      1     1
+ 
+>          productDirac[fnu , rho , fnu ] productGen[af , af ] s2[p , rho ] 
+                           1     1     2               1    2      1     1
+ 
+>          s2[p , rho ] s2[p  + 2 q , rho ] - 
+               1     2      1      1     2
+ 
+                   2   2
+>         (4 beta g  im  r c2[p  + 2 q , rho ] productDirac[fnu , fnu ] 
+                               1      1     1                  1     2
+ 
+>            productGen[af , af ] s2[p , rho ] s2[p , rho ] 
+                          1    2      1     1      1     2
+ 
+>            s2[2 (p  + q ), rho ] s2[p  + 2 q , rho ]) / Nc + 
+                    1    1      1      1      1     2
+ 
+                  2   2
+>         4 beta g  im  Nc r c2[p  + 2 q , rho ] productDirac[fnu , fnu ] 
+                                 1      1     1                  1     2
+ 
+>          productGen[af , af ] s2[p , rho ] s2[p , rho ] 
+                        1    2      1     1      1     2
+ 
+>          s2[2 (p  + q ), rho ] s2[p  + 2 q , rho ] - 
+                  1    1      1      1      1     2
+ 
+                   2    2
+>         (2 beta g  m r  productDirac[fnu , fnu ] productGen[af , af ] 
+                                          1     2               1    2
+ 
+>            s2[p , rho ] s2[p , rho ] s2[p  + 2 q , rho ] s2[p  + 2 q , rho ]
+                 1     1      1     2      1      1     1      1      1     2
+ 
+                              2       2
+>            ) / Nc + 2 beta g  m Nc r  productDirac[fnu , fnu ] 
+                                                        1     2
+ 
+>          productGen[af , af ] s2[p , rho ] s2[p , rho ] s2[p  + 2 q , rho ] 
+                        1    2      1     1      1     2      1      1     1
+ 
+>          s2[p  + 2 q , rho ] - 
+               1      1     2
+ 
+                   2     2
+>         (2 beta g  im r  productDirac[fnu , rho , fnu ] 
+                                           1     3     2
+ 
+>            productGen[af , af ] s2[p , rho ] s2[p , rho ] 
+                          1    2      1     1      1     2
+ 
+>            s2[2 (p  + q ), rho ] s2[p  + 2 q , rho ] s2[p  + 2 q , rho ]) / 
+                    1    1      3      1      1     1      1      1     2
+ 
+                        2        2
+>          Nc + 2 beta g  im Nc r  productDirac[fnu , rho , fnu ] 
+                                                   1     3     2
+ 
+>          productGen[af , af ] s2[p , rho ] s2[p , rho ] 
+                        1    2      1     1      1     2
+ 
+>          s2[2 (p  + q ), rho ] s2[p  + 2 q , rho ] s2[p  + 2 q , rho ] - 
+                  1    1      3      1      1     1      1      1     2
+ 
+                   2                      2
+>         (4 beta g  r c2[p  + 2 q , rho ]  productDirac[fnu , fnu ] 
+                           1      1     1                   1     2
+ 
+                                              2
+>            productGen[af , af ] s2[p , rho ]  s2sq[p  + q ]) / Nc + 
+                          1    2      1     1         1    1
+ 
+                  2                         2
+>         4 beta g  Nc r c2[p  + 2 q , rho ]  productDirac[fnu , fnu ] 
+                             1      1     1                   1     2
+ 
+                                            2
+>          productGen[af , af ] s2[p , rho ]  s2sq[p  + q ] + 
+                        1    2      1     1         1    1
+ 
+                   2     2
+>         (8 beta g  im r  c2[p  + 2 q , rho ] productDirac[fnu , rho , fnu ] 
+                               1      1     1                  1     1     2
+ 
+>            productGen[af , af ] s2[p , rho ] s2[p , rho ] 
+                          1    2      1     1      1     2
+ 
+>            s2[p  + 2 q , rho ] s2sq[p  + q ]) / Nc - 
+                 1      1     2        1    1
+ 
+                  2        2
+>         8 beta g  im Nc r  c2[p  + 2 q , rho ] 
+                                 1      1     1
+ 
+>          productDirac[fnu , rho , fnu ] productGen[af , af ] s2[p , rho ] 
+                           1     1     2               1    2      1     1
+ 
+>          s2[p , rho ] s2[p  + 2 q , rho ] s2sq[p  + q ] + 
+               1     2      1      1     2        1    1
+ 
+                   2  3
+>         (4 beta g  r  productDirac[fnu , fnu ] productGen[af , af ] 
+                                        1     2               1    2
+ 
+>            s2[p , rho ] s2[p , rho ] s2[p  + 2 q , rho ] 
+                 1     1      1     2      1      1     1
+ 
+>            s2[p  + 2 q , rho ] s2sq[p  + q ]) / Nc - 
+                 1      1     2        1    1
+ 
+                  2     3
+>         4 beta g  Nc r  productDirac[fnu , fnu ] productGen[af , af ] 
+                                          1     2               1    2
+ 
+>          s2[p , rho ] s2[p , rho ] s2[p  + 2 q , rho ] s2[p  + 2 q , rho ] 
+               1     1      1     2      1      1     1      1      1     2
+ 
+>          s2sq[p  + q ]))
+                 1    1
+
+In[36]:= list1 = {{m,1},{s2[_,_],1},{hat2[__],-2},{prop[__],-2},{fhat[__],-2},{s2sq[_],2},{sisq[_],2},{s2qu[_],4}} ;
+
+In[37]:= list2 = {{m,1},{s2[a_. q[1],_],1}} ;
+
+In[38]:= {countlist[#,list1], countlist[#,list2]}& /@ List @@ Expand[%%%] // Union
+
+Out[38]= {{-3, 0}, {-3, 1}, {-2, 0}, {-2, 1}, {-1, 0}, {-1, 1}, {0, 0}}
+
+In[39]:= makes2sq[%%%%];
+
+In[40]:= reducerho[%];
+
+In[41]:= rorder[%];
+
+In[42]:= Expand[%] /. m -> 0 /. hat2[a_,0] :> hat2[a] /. fhat[b_,0] -> fhat[b] ; 
+
+In[43]:= subtractionIRdiv[Expand[%],1] ;
+
+In[44]:= convergent = % /. div -> 0 ;
+
+In[45]:= divergent = %% - % ;
+
+In[46]:= {countlist[#, list1], countlist[#, list2]} & /@ List @@ divergent // Union
+
+Out[46]= {{-3, 0}, {-3, 1}}
+
+In[47]:= {Length[%%], Variables[%%]}
+
+Out[47]= {8, {beta, div, g, im, Nc, hat2[p ], hat2[p  + q ], 
+                                          1         1    1
+ 
+>     productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                      1     1     2                   1     2     2
+ 
+>     productGen[af , af ], s2[2 p , rho ], s2[2 p , rho ], s2[2 q , rho ]}}
+                   1    2         1     1         1     2         1     1
+
+In[48]:= (#/(# /. hat2[__]->1 /. fhat[__] -> 1 /. s2[__]->1 /. c2[__]->1 /.
+sisq[__] ->1 /. s2sq[__] -> 1 /. s2qu[__] -> 1 ))& /@ List @@ 
+ExpandAll[divergent] // (reducerho /@ #)& // (rorder /@ #)& // Union
+
+Out[48]= {hat2[p ] hat2[p  + q ] s2[2 p , rho ], 
+                1        1    1        1     1
+ 
+>    hat2[p ] hat2[p  + q ] s2[2 q , rho ], 
+           1        1    1        1     1
+ 
+             2
+>    hat2[p ]  hat2[p  + q ] s2[2 p , rho ] s2[2 p , rho ] s2[2 q , rho ]}
+           1         1    1        1     1        1     2        1     1
+
+In[49]:= IntegralsResults
+
+                  2              2
+Out[49]= {hat2[p ]  hat2[p  + q ]  s2[p , n1_] s2[p  + q , n1_] 
+                1         1    1       1           1    1
+ 
+>      s2[2 p  + 2 q , n2_] -> 
+             1      1
+ 
+                      2   2                              2
+>     (delm[n1, rho  ]  q   S2[2 q , n2] - 4 S2[2 q , n1]  S2[2 q , n2] + 
+                   20    1        1                1             1
+ 
+                        2
+>        delm[n1, n2] q   (2 S2[2 q , n1] - 
+                       1           1
+ 
+>           delm[n1, rho  ] S2[2 q , rho  ]) + 
+                        20        1     20
+ 
+>        delm[n1, rho  ] S2[2 q , n1] 
+                     20        1
+ 
+                               2
+>         (-(delm[n2, rho  ] q  ) + 2 S2[2 q , n2] S2[2 q , rho  ])) / 
+                         20   1             1            1     20
+ 
+              2   4           2              2
+>      (256 Pi  q  ), hat2[p ]  hat2[p  + q ]  s2[2 p , n1_] 
+                 1          1         1    1         1
+ 
+                                              2
+                               delm[n1, n2] q   - 2 S2[2 q , n1] S2[2 q , n2]
+                                             1            1            1
+>      s2[2 p  + 2 q , n2_] -> ----------------------------------------------\
+             1      1                                 2   4
+                                                 32 Pi  q
+                                                         1
+ 
+                3
+>     , hat2[p ]  hat2[p  + q ] s2[2 p , n1_] s2[2 p , n2_] s2[2 p , n3_] 
+              1         1    1        1             1             1
+ 
+>      s2[2 p , n4_] -> 
+             1
+ 
+>     -0.00059090366540898904384 delm[n1, n4] delm[n2, n3] + 
+ 
+       13 delm[n1, n4] delm[n2, n3]   EulerGamma delm[n1, n4] delm[n2, n3]
+>      ---------------------------- - ------------------------------------ - 
+                        2                                 2
+                 2304 Pi                            384 Pi
+ 
+>      0.00059090366540898904384 delm[n1, n3] delm[n2, n4] + 
+ 
+       13 delm[n1, n3] delm[n2, n4]   EulerGamma delm[n1, n3] delm[n2, n4]
+>      ---------------------------- - ------------------------------------ - 
+                        2                                 2
+                 2304 Pi                            384 Pi
+ 
+>      0.00059090366540898904384 delm[n1, n2] delm[n3, n4] + 
+ 
+       13 delm[n1, n2] delm[n3, n4]   EulerGamma delm[n1, n2] delm[n3, n4]
+>      ---------------------------- - ------------------------------------ - 
+                        2                                 2
+                 2304 Pi                            384 Pi
+ 
+>      0.00051389481573543896717 delm[n1, n2, n3, n4] + 
+ 
+       delm[n1, n4] delm[n2, n3] Log[4 Pi]
+>      ----------------------------------- + 
+                           2
+                     384 Pi
+ 
+       delm[n1, n3] delm[n2, n4] Log[4 Pi]
+>      ----------------------------------- + 
+                           2
+                     384 Pi
+ 
+       delm[n1, n2] delm[n3, n4] Log[4 Pi]
+>      ----------------------------------- - 
+                           2
+                     384 Pi
+ 
+                                       2
+       delm[n1, n4] delm[n2, n3] Log[q  ]
+                                      1
+>      ---------------------------------- - 
+                          2
+                    384 Pi
+ 
+                                       2
+       delm[n1, n3] delm[n2, n4] Log[q  ]
+                                      1
+>      ---------------------------------- - 
+                          2
+                    384 Pi
+ 
+                                       2
+       delm[n1, n2] delm[n3, n4] Log[q  ]
+                                      1
+>      ---------------------------------- + 
+                          2
+                    384 Pi
+ 
+       delm[n3, n4] s2[2 q , n1] s2[2 q , n2]
+                          1            1
+>      -------------------------------------- + 
+                          2   2
+                    384 Pi  q
+                             1
+ 
+       delm[n2, n4] s2[2 q , n1] s2[2 q , n3]
+                          1            1
+>      -------------------------------------- + 
+                          2   2
+                    384 Pi  q
+                             1
+ 
+       delm[n1, n4] s2[2 q , n2] s2[2 q , n3]
+                          1            1
+>      -------------------------------------- + 
+                          2   2
+                    384 Pi  q
+                             1
+ 
+       delm[n2, n3] s2[2 q , n1] s2[2 q , n4]
+                          1            1
+>      -------------------------------------- + 
+                          2   2
+                    384 Pi  q
+                             1
+ 
+       delm[n1, n3] s2[2 q , n2] s2[2 q , n4]
+                          1            1
+>      -------------------------------------- + 
+                          2   2
+                    384 Pi  q
+                             1
+ 
+       delm[n1, n2] s2[2 q , n3] s2[2 q , n4]
+                          1            1
+>      -------------------------------------- + 
+                          2   2
+                    384 Pi  q
+                             1
+ 
+       s2[2 q , n1] s2[2 q , n2] s2[2 q , n3] s2[2 q , n4]
+             1            1            1            1
+>      ---------------------------------------------------, 
+                                2   4
+                           96 Pi  q
+                                   1
+ 
+             2
+>    hat2[p ]  hat2[p  + q ] s2[2 p , n1_] s2[2 p , n2_] s2[2 p , n3_] -> 
+           1         1    1        1             1             1
+ 
+>     0.0011818073308179780877 delm[n2, n3] s2[2 q , n1] - 
+                                                  1
+ 
+       5 delm[n2, n3] s2[2 q , n1]   EulerGamma delm[n2, n3] s2[2 q , n1]
+                            1                                      1
+>      --------------------------- + ------------------------------------ + 
+                       2                                 2
+                 576 Pi                            192 Pi
+ 
+>      0.0010277896314708779343 delm[n1, n2, n3] s2[2 q , n1] - 
+                                                       1
+ 
+       delm[n2, n3] Log[4 Pi] s2[2 q , n1]
+                                    1
+>      ----------------------------------- + 
+                           2
+                     192 Pi
+ 
+                          2
+       delm[n2, n3] Log[q1 ] s2[2 q , n1]
+                                   1
+>      ---------------------------------- + 
+                          2
+                    192 Pi
+ 
+>      0.0011818073308179780877 delm[n1, n3] s2[2 q , n2] - 
+                                                   1
+ 
+       5 delm[n1, n3] s2[2 q , n2]   EulerGamma delm[n1, n3] s2[2 q , n2]
+                            1                                      1
+>      --------------------------- + ------------------------------------ - 
+                       2                                 2
+                 576 Pi                            192 Pi
+ 
+       delm[n1, n3] Log[4 Pi] s2[2 q , n2]
+                                    1
+>      ----------------------------------- + 
+                           2
+                     192 Pi
+ 
+                          2
+       delm[n1, n3] Log[q1 ] s2[2 q , n2]
+                                   1
+>      ---------------------------------- + 
+                          2
+                    192 Pi
+ 
+>      0.0011818073308179780877 delm[n1, n2] s2[2 q , n3] - 
+                                                   1
+ 
+       5 delm[n1, n2] s2[2 q , n3]   EulerGamma delm[n1, n2] s2[2 q , n3]
+                            1                                      1
+>      --------------------------- + ------------------------------------ - 
+                       2                                 2
+                 576 Pi                            192 Pi
+ 
+       delm[n1, n2] Log[4 Pi] s2[2 q , n3]
+                                    1
+>      ----------------------------------- + 
+                           2
+                     192 Pi
+ 
+                          2
+       delm[n1, n2] Log[q1 ] s2[2 q , n3]
+                                   1
+>      ---------------------------------- - 
+                          2
+                    192 Pi
+ 
+       s2[2 q , n1] s2[2 q , n2] s2[2 q , n3]
+             1            1            1
+>      --------------------------------------, 
+                          2   2
+                     48 Pi  q1
+ 
+             3
+>    hat2[p ]  hat2[p  + q ] s2[2 p , nu ] s2[2 p , n1_] s2[2 p , n2_] -> 
+           1         1    1        1    2        1             1
+ 
+                         2                                2
+>     (-(delm[n2, nu ] q   S2[2 q , n1]) - delm[n1, n2] q   S2[2 q , nu ] - 
+                    2   1        1                       1        1    2
+ 
+                                       2
+>        S2[2 q , n2] (delm[n1, nu ] q   + 2 S2[2 q , n1] S2[2 q , nu ])) / 
+               1                  2   1            1            1    2
+ 
+              2   4           3
+>      (128 Pi  q  ), hat2[p ]  hat2[p  + q ] s2[2 p , nu ] s2[2 p , n1_] 
+                 1          1         1    1        1    1        1
+ 
+>      s2[2 p , n2_] -> 
+             1
+ 
+                         2                                2
+>     (-(delm[n2, nu ] q   S2[2 q , n1]) - delm[n1, n2] q   S2[2 q , nu ] - 
+                    1   1        1                       1        1    1
+ 
+                                       2
+>        S2[2 q , n2] (delm[n1, nu ] q   + 2 S2[2 q , n1] S2[2 q , nu ])) / 
+               1                  1   1            1            1    1
+ 
+              2   4           2
+>      (128 Pi  q  ), hat2[p ]  hat2[p  + q ] s2[2 p , n1_] s2[2 p , n2_] -> 
+                 1          1         1    1        1             1
+ 
+                                               delm[n1, n2]
+>     -0.0019315325108803903663 delm[n1, n2] + ------------ - 
+                                                       2
+                                                  32 Pi
+ 
+       EulerGamma delm[n1, n2]   delm[n1, n2] Log[4 Pi]
+>      ----------------------- + ---------------------- - 
+                    2                         2
+               64 Pi                     64 Pi
+ 
+                          2    s2[2 q , n1] s2[2 q , n2]
+       delm[n1, n2] Log[q1 ]         1            1
+>      --------------------- + -------------------------, 
+                   2                       2   2
+              64 Pi                   32 Pi  q1
+ 
+>    hat2[p ] hat2[p  + q ] s2[2 p , n1_] s2[2 p , n2_] -> 
+           1        1    1        1             1
+ 
+>     0.014966695115530107042 delm[n1, n2] + 
+ 
+                                                     2
+                                  2                q1  delm[n1, n2]
+>      0.0011818073308179780877 q1  delm[n1, n2] - ---------------- + 
+                                                             2
+                                                        72 Pi
+ 
+                    2                  2
+       EulerGamma q1  delm[n1, n2]   q1  delm[n1, n2] Log[4 Pi]
+>      --------------------------- - -------------------------- + 
+                       2                            2
+                 192 Pi                       192 Pi
+ 
+         2                    2
+       q1  delm[n1, n2] Log[q1 ]
+>      ------------------------- - 
+                      2
+                192 Pi
+ 
+                                                         2
+>      0.0010277896314708779343 delm[n1, n2] s2[2 q , n1]  - 
+                                                   1
+ 
+>      0.0047272293232719123507 s2[2 q , n1] s2[2 q , n2] + 
+                                      1            1
+ 
+       13 s2[2 q , n1] s2[2 q , n2]   EulerGamma s2[2 q , n1] s2[2 q , n2]
+                1            1                         1            1
+>      ---------------------------- - ------------------------------------ + 
+                       2                                  2
+                 288 Pi                              48 Pi
+ 
+       Log[4 Pi] s2[2 q , n1] s2[2 q , n2]
+                       1            1
+>      ----------------------------------- - 
+                          2
+                     48 Pi
+ 
+             2
+       Log[q1 ] s2[2 q , n1] s2[2 q , n2]
+                      1            1
+>      ----------------------------------, 
+                          2
+                     48 Pi
+ 
+             3
+>    hat2[p ]  hat2[p  + q ] s2[2 p , nu ] s2[2 p , nu ] s2[2 p , n1_] -> 
+           1         1    1        1    1        1    2        1
+ 
+                         2                                  2
+>     (-(delm[n1, nu ] q   S2[2 q , nu ]) - delm[n1, nu ] q   S2[2 q , nu ] - 
+                    2   1        1    1                1   1        1    2
+ 
+                                        2
+>        S2[2 q , n1] (delm[nu , nu ] q   + 2 S2[2 q , nu ] S2[2 q , nu ])) / 
+               1              1    2   1            1    1        1    2
+ 
+              2   4           2
+>      (128 Pi  q  ), hat2[p ]  hat2[p  + q ] s2[2 p , n1_] -> 
+                 1          1         1    1        1
+ 
+            S2[2 q , n1]
+        1         1
+>     -(--) ------------, hat2[p ] hat2[p  + q ] s2[2 p , n1_] -> 
+        16      2   2           1        1    1        1
+              Pi  q
+                   1
+ 
+                                              s2[2 q , n1]
+                                                    1
+>     0.0038630650217607807326 s2[2 q , n1] - ------------ + 
+                                     1                2
+                                                 16 Pi
+ 
+       EulerGamma s2[2 q , n1]   Log[4 Pi] s2[2 q , n1]
+                        1                        1
+>      ----------------------- - ---------------------- + 
+                    2                         2
+               32 Pi                     32 Pi
+ 
+             2
+       Log[q1 ] s2[2 q , n1]
+                      1               2
+>      ---------------------, hat2[p ]  hat2[p  + q ] s2[2 p , nu ] -> 
+                   2                1         1    1        1    1
+              32 Pi
+ 
+            S2[2 q , nu ]
+        1         1    1
+>     -(--) -------------, hat2[p ] hat2[p  + q ] -> 
+        16       2   2           1        1    1
+               Pi  q
+                    1
+ 
+                                      2
+                                Log[q1 ]
+>     0.036678329074757116120 - --------}
+                                      2
+                                 16 Pi
+
+In[50]:= DIVpart = divergent /. IntegralsResults /.  Log[q1^2] -> Log[q[1]^2] /. 1/q1^2 -> 1/q[1]^2;
+
+In[51]:= {Length[%], Variables[%]}
+
+                                                            2
+Out[51]= {8, {beta, div, g, im, Nc, delm[rho , rho ], Log[q  ], 
+                                            1     2        1
+ 
+>     productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                      1     1     2                   1     2     2
+ 
+>     productGen[af , af ], q , s2[2 q , rho ], s2[2 q , rho ]}}
+                   1    2    1        1     1         1     2
+
+In[52]:= (* Save["MyFirstDiagram.m", DIVpart] *)
+
+In[53]:= {countlist[#, list1], countlist[#, list2]} & /@ List @@ convergent // Union
+
+Out[53]= {{-2, 0}, {-1, 0}, {-1, 1}, {0, 0}}
+
+In[54]:= {Length[convergent], Variables[convergent]}
+
+Out[54]= {58, {beta, g, im, Nc, r, c2[-p  + q , rho ], c2[-p  + q , rho ], 
+                                        1    1     1        1    1     2
+ 
+>     c2[p  + 2 q , rho ], fhat[p ], fhat[p  + q ], hat2[p ], hat2[p  + q ], 
+          1      1     1         1         1    1         1         1    1
+ 
+>     productDirac[fnu , fnu ], productDirac[fnu , rho , fnu ], 
+                      1     2                   1     1     2
+ 
+>     productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                      1     2     2                   1     3     2
+ 
+>     productGen[af , af ], s2[p , rho ], s2[p , rho ], s2[2 p , rho ], 
+                   1    2       1     1       1     2         1     1
+ 
+>     s2[2 p , rho ], s2[q , rho ], s2[2 q , rho ], s2[2 q , rho ], 
+            1     2       1     1         1     1         1     2
+ 
+>     s2[p  + q , rho ], s2[p  + q , rho ], s2[2 (p  + q ), rho ], 
+          1    1     1       1    1     2          1    1      1
+ 
+>     s2[2 (p  + q ), rho ], s2[p  + 2 q , rho ], s2[p  + 2 q , rho ], 
+             1    1      3       1      1     1       1      1     2
+ 
+>     s2[2 p  + 2 q , rho ], s2[2 p  + 2 q , rho ], s2qu[p ], s2sq[p ], 
+            1      1     1         1      1     2         1         1
+ 
+>     s2sq[p  + q ]}}
+            1    1
+
+In[55]:= {count[#,s2sq[q[1]+p[1]]],count[#,s2qu[q[1]+p[1]]]}& /@ List @@ convergent // Union
+
+Out[55]= {{0, 0}, {1, 0}}
+
+In[56]:= convergent /. s2sq[a_+b_]^i_. :> s2sq[a+b]^(i-1)*s2[a+b,rho[20]]^2 ;
+
+In[57]:= % /. s2sq[a_+b_]^i_. :> s2sq[a+b]^(i-1)*s2[a+b,rho[21]]^2 ;
+
+In[58]:= % /. s2qu[a_+b_]^i_. :> s2qu[a+b]^(i-1)*s2[a+b,rho[26]]^4 ;
+
+In[59]:= Select[Variables[%],FreeQ[#,dtrace]&]
+
+Out[59]= {beta, g, im, Nc, r, c2[-p  + q , rho ], c2[-p  + q , rho ], 
+                                   1    1     1        1    1     2
+ 
+>    c2[p  + 2 q , rho ], fhat[p ], fhat[p  + q ], hat2[p ], hat2[p  + q ], 
+         1      1     1         1         1    1         1         1    1
+ 
+>    productDirac[fnu , fnu ], productDirac[fnu , rho , fnu ], 
+                     1     2                   1     1     2
+ 
+>    productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                     1     2     2                   1     3     2
+ 
+>    productGen[af , af ], s2[p , rho ], s2[p , rho ], s2[2 p , rho ], 
+                  1    2       1     1       1     2         1     1
+ 
+>    s2[2 p , rho ], s2[q , rho ], s2[2 q , rho ], s2[2 q , rho ], 
+           1     2       1     1         1     1         1     2
+ 
+>    s2[p  + q , rho ], s2[p  + q , rho ], s2[p  + q , rho  ], 
+         1    1     1       1    1     2       1    1     20
+ 
+>    s2[2 (p  + q ), rho ], s2[2 (p  + q ), rho ], s2[p  + 2 q , rho ], 
+            1    1      1          1    1      3       1      1     1
+ 
+>    s2[p  + 2 q , rho ], s2[2 p  + 2 q , rho ], s2[2 p  + 2 q , rho ], 
+         1      1     2         1      1     1         1      1     2
+ 
+>    s2qu[p ], s2sq[p ]}
+           1         1
+
+In[60]:= Module[{expr = ExpandAll[%%], exprtemp = 0, sum = 0, i=1},
+       While[i<=Length[expr],
+             exprtemp = Take[expr,{i,Min[i+99,Length[expr]]}] ;
+	     exprtemp =	exprtemp //. s2[a_+ b_,c_] :> s2[a,c] c2[b,c] + c2[a,c] s2[b,c] // Expand ;
+	     exprtemp =	exprtemp //. c2[a_ + b_,c_]:> c2[a,c] c2[b,c] - s2[a,c] s2[b,c] // Expand ;	
+             exprtemp = Select[exprtemp,(countlist[#,list2] <= 1)&];
+             exprtemp = If[countlist[#,list2]>=1,simplifydelm[# /.c2[a_.q[1],b_]:>delm[b,b]],#]& /@ exprtemp ;
+             exprtemp = FixedPoint[replacec2exact, exprtemp];
+             sum = sum + Select[exprtemp,(countlist[#,list2] <= 1)&];
+             Print["{i=",i,", length[sum]=", Length[sum],"}"];
+             i = i + 100]; sum];
+{i=1, length[sum]=132}
+
+In[61]:= {Length[%], Variables[%]}	     
+
+Out[61]= {132, {beta, g, im, Nc, r, c2[p , rho ], c2[p , rho ], 
+                                        1     1       1     2
+ 
+>     c2[p , rho  ], c2[2 p , rho ], c2[2 p , rho ], fhat[p ], fhat[p  + q ], 
+          1     20         1     1         1     3         1         1    1
+ 
+>     hat2[p ], hat2[p  + q ], productDirac[fnu , fnu ], 
+            1         1    1                   1     2
+ 
+>     productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                      1     1     2                   1     2     2
+ 
+>     productDirac[fnu , rho , fnu ], productGen[af , af ], s2[p , rho ], 
+                      1     3     2                1    2       1     1
+ 
+>     s2[p , rho ], s2[p , rho  ], s2[2 p , rho ], s2[2 p , rho ], 
+          1     2       1     20         1     1         1     2
+ 
+>     s2[2 p , rho ], s2[q , rho ], s2[q , rho ], s2[q , rho  ], 
+            1     3       1     1       1     2       1     20
+ 
+>     s2[2 q , rho ], s2[2 q , rho ], s2[2 q , rho ], s2qu[p ], s2sq[p ]}}
+            1     1         1     2         1     3         1         1
+
+In[62]:= If[countlist[#,list2] == 1 , canonical[#/. {hat2[a_+b_. q[1],c___]:>hat2[a],
+ hat2[a_,c__]:>hat2[a], fhat[a_+b_. q[1],c__]:>fhat[a], fhat[a_,c__]:>fhat[a], s2[a_+b_. q[1],c_]:>s2[a,c],
+ s2qu[a_+q[1]]:>s2qu[a], s2sq[a_+q[1]]:>s2sq[a]}], #]& /@ %% ;
+
+In[63]:= {Length[%], Variables[%]}
+
+Out[63]= {132, {beta, g, im, Nc, r, c2[p , rho ], c2[p , rho ], 
+                                        1     1       1     2
+ 
+>     c2[p , rho  ], c2[2 p , rho ], c2[2 p , rho ], fhat[p ], fhat[p  + q ], 
+          1     20         1     1         1     3         1         1    1
+ 
+>     hat2[p ], hat2[p  + q ], productDirac[fnu , fnu ], 
+            1         1    1                   1     2
+ 
+>     productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                      1     1     2                   1     2     2
+ 
+>     productDirac[fnu , rho , fnu ], productGen[af , af ], s2[p , rho ], 
+                      1     3     2                1    2       1     1
+ 
+>     s2[p , rho ], s2[p , rho  ], s2[2 p , rho ], s2[2 p , rho ], 
+          1     2       1     20         1     1         1     2
+ 
+>     s2[2 p , rho ], s2[q , rho ], s2[q , rho ], s2[q , rho  ], 
+            1     3       1     1       1     2       1     20
+ 
+>     s2[2 q , rho ], s2[2 q , rho ], s2[2 q , rho ], s2qu[p ], s2sq[p ]}}
+            1     1         1     2         1     3         1         1
+
+In[64]:= rorder[reducerho[%%]];
+
+In[65]:= Length[%]
+
+Out[65]= 128
+
+In[66]:= (* We provide the expressions for the massive propagators *)
+
+In[67]:= If[countlist[#,list2] < 1, # /. fhat[a_+q[1],m]^i_. :> fhat[a+q[1],m]^(i-1) (fhat[a]-
+(s2[4a+2q[1],rho[20]] s2[2q[1],rho[20]] + m^2 + 4 m r s2sq[a+q[1]]+
+  4r^2 s2[2a+q[1],rho[20]] s2[q[1],rho[20]] *(s2sq[a]+s2sq[a+q[1]]) )*fhat[a]*fhat[a+q[1],m]) //
+Expand // reducerho, #]& /@ Expand[%%%];
+
+In[68]:= {ByteCount[%],Length[%]}
+
+Out[68]= {250632, 128}
+
+In[69]:= If[countlist[#,list2] < 1, # /. hat2[a_+q[1],m]^i_. :> hat2[a+q[1],m]^(i-1) (hat2[a]-
+(4s2[q[1],rho[20]]*s2[2a+q[1],rho[20]] + m^2 )*hat2[a]*hat2[a+q[1],m]) //
+Expand // reducerho, #]& /@ %% ;
+
+In[70]:= {ByteCount[%],Length[%]}
+
+Out[70]= {250632, 128}
+
+In[71]:= If[countlist[#,list2] < 1, # /. fhat[a_+q[1]]^i_. :> fhat[a+q[1]]^(i-1) (fhat[a]-
+(s2[4a+2q[1],rho[20]] s2[2q[1],rho[20]] +
+  4r^2 s2[2a+q[1],rho[20]] s2[q[1],rho[20]] *(s2sq[a]+s2sq[a+q[1]]) )*fhat[a]*fhat[a+q[1]]) //
+Expand // reducerho, #]& /@ %%;
+
+In[72]:= {ByteCount[%],Length[%]}
+
+Out[72]= {408496, 188}
+
+In[73]:= If[countlist[#,list2] < 1, # /. hat2[a_+q[1]]^i_. :> hat2[a+q[1]]^(i-1) (hat2[a]-
+(4s2[q[1],rho[20]]*s2[2a+q[1],rho[20]])*hat2[a]*hat2[a+q[1]]) //
+Expand // reducerho, #]& /@ %% ;
+
+In[74]:= {ByteCount[%],Length[%]}
+
+Out[74]= {447456, 204}
+
+In[75]:= If[countlist[#,list2] < 1, # /. hat2[a_+q[1]]^i_. :> hat2[a+q[1]]^(i-1) (hat2[a]-
+(4s2[q[1],rho[20]]*s2[2a+q[1],rho[20]])*hat2[a]*hat2[a+q[1]]) //
+Expand // reducerho, #]& /@ %% ;
+
+In[76]:= {ByteCount[%],Length[%]}
+
+Out[76]= {468448, 212}
+
+In[77]:= Variables[%%] // Sort
+
+Out[77]= {beta, g, im, Nc, r, c2[p , rho ], c2[p , rho ], c2[2 p , rho ], 
+                                  1     1       1     2         1     1
+ 
+>    fhat[p ], fhat[p  + q ], hat2[p ], hat2[p  + q ], 
+           1         1    1         1         1    1
+ 
+>    productDirac[fnu , fnu ], productDirac[fnu , rho , fnu ], 
+                     1     2                   1     1     2
+ 
+>    productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                     1     2     2                   1     3     2
+ 
+>    productGen[af , af ], s2[p , rho ], s2[p , rho ], s2[p , rho ], 
+                  1    2       1     1       1     2       1     3
+ 
+>    s2[2 p , rho ], s2[2 p , rho ], s2[2 p , rho ], s2[q , rho ], 
+           1     1         1     2         1     3       1     1
+ 
+>    s2[q , rho ], s2[q , rho ], s2[q , rho ], s2[2 q , rho ], 
+         1     2       1     3       1     4         1     1
+ 
+>    s2[2 q , rho ], s2[2 q , rho ], s2[2 q , rho ], s2[2 p  + q , rho ], 
+           1     2         1     3         1     4         1    1     2
+ 
+>    s2[2 p  + q , rho ], s2[2 p  + q , rho ], s2[4 p  + 2 q , rho ], 
+           1    1     3         1    1     4         1      1     2
+ 
+>    s2[4 p  + 2 q , rho ], s2[4 p  + 2 q , rho ], s2qu[p ], s2sq[p ], 
+           1      1     3         1      1     4         1         1
+ 
+>    s2sq[p  + q ]}
+           1    1
+
+In[78]:= If[countlist[#,list2] == 1 , canonical[#/. {hat2[a_+b_. q[1],c___]:>hat2[a],
+ hat2[a_,c__]:>hat2[a], fhat[a_+b_. q[1],c__]:>fhat[a],
+ fhat[a_,c__]:>fhat[a], s2[a_+b_. q[1],c_]:>s2[a,c],
+ hat2[a_+b_. q[1]]:>hat2[a],fhat[a_+b_. q[1]]:>fhat[a], 
+ s2qu[a_+q[1]]:>s2qu[a], s2sq[a_+q[1]]:>s2sq[a]}], #]& /@ %%% ;
+
+In[79]:= {Length[%], Variables[%]}
+
+Out[79]= {184, {beta, g, im, Nc, r, c2[p , rho ], c2[p , rho ], 
+                                        1     1       1     2
+ 
+>     c2[2 p , rho ], fhat[p ], hat2[p ], productDirac[fnu , fnu ], 
+            1     1         1         1                   1     2
+ 
+>     productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                      1     1     2                   1     2     2
+ 
+>     productDirac[fnu , rho , fnu ], productGen[af , af ], s2[p , rho ], 
+                      1     3     2                1    2       1     1
+ 
+>     s2[p , rho ], s2[p , rho ], s2[2 p , rho ], s2[2 p , rho ], 
+          1     2       1     3         1     1         1     2
+ 
+>     s2[2 p , rho ], s2[2 p , rho ], s2[4 p , rho ], s2[4 p , rho ], 
+            1     3         1     4         1     2         1     3
+ 
+>     s2[4 p , rho ], s2[q , rho ], s2[q , rho ], s2[q , rho ], s2[q , rho ], 
+            1     4       1     1       1     2       1     3       1     4
+ 
+>     s2[2 q , rho ], s2[2 q , rho ], s2[2 q , rho ], s2[2 q , rho ], 
+            1     1         1     2         1     3         1     4
+ 
+>     s2qu[p ], s2sq[p ]}}
+            1         1
+
+In[80]:= {countlist[#, list1], countlist[#, list2]} & /@ List @@ %% // Union
+
+Out[80]= {{-2, 0}, {-2, 1}, {-1, 0}, {-1, 1}, {0, 0}, {0, 1}, {1, 1}, {2, 1}}
+
+In[81]:= matchindices[%%%];
+
+In[82]:= FreeQ[%, matchindices]
+
+Out[82]= True
+
+In[83]:= simplifydelm[%%] // reducerho // rorder ;
+
+In[84]:= {Length[%], Variables[%]}
+
+Out[84]= {86, {beta, g, im, Nc, r, c2[p , rho ], c2[p , rho ], 
+                                       1     1       1     2
+ 
+>     c2[2 p , rho ], fhat[p ], hat2[p ], productDirac[fnu , fnu ], 
+            1     1         1         1                   1     2
+ 
+>     productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                      1     1     2                   1     2     2
+ 
+>     productDirac[fnu , rho , fnu ], productGen[af , af ], s2[p , rho ], 
+                      1     3     2                1    2       1     1
+ 
+>     s2[p , rho ], s2[p , rho ], s2[2 p , rho ], s2[2 p , rho ], 
+          1     2       1     3         1     1         1     2
+ 
+>     s2[2 p , rho ], s2[4 p , rho ], s2[4 p , rho ], s2[4 p , rho ], 
+            1     3         1     1         1     2         1     3
+ 
+>     s2[q , rho ], s2[q , rho ], s2[q , rho ], s2[2 q , rho ], 
+          1     1       1     2       1     3         1     1
+ 
+>     s2[2 q , rho ], s2[2 q , rho ], s2qu[p ], s2sq[p ]}}
+            1     2         1     3         1         1
+
+In[85]:= Module[{expr = %%, exprtemp = 0, sum = 0, i=1},
+While[i<=Length[expr],
+temp = Take[expr,{i,Min[i+99,Length[expr]]}];
+temp = ((Expand[makeindependent[temp]] // simplifydelm // Expand // reducerho // rorder ));
+Print["makeindependent done!"];
+temp = temp //. s2[a_,b_]^ii_. c2[a_,b_]^j_. :> s2[a,b]^(ii-1) c2[a,b]^(j-1) 1/2 s2[2a,b];
+temp = makes2sq[temp]//. s2sq[a_]^ii_. hat2[a_]^j_. :> 1/4 s2sq[a]^(ii-1) hat2[a]^(j-1) ;
+temp = rorder[reducerho[makes2sq[temp/.q[1]->p[2]] /.p[2]->q[1]]] ;
+temp = temp // reducerho // rorder ;
+sum = sum + temp;
+Print["{i=",i,", length[sum]=", Length[sum],"}"];
+i = i + 100];
+sum ];
+makeindependent done!
+{i=1, length[sum]=64}
+
+In[86]:= Variables[%]
+
+Out[86]= {beta, g, im, Nc, r, c2[p , rho ], c2[2 p , rho ], fhat[p ], 
+                                  1     1         1     1         1
+ 
+>    hat2[p ], productDirac[fnu , fnu ], productDirac[fnu , rho , fnu ], 
+           1                   1     2                   1     1     2
+ 
+>    productDirac[fnu , rho , fnu ], productGen[af , af ], s2[p , rho ], 
+                     1     2     2                1    2       1     1
+ 
+>    s2[2 p , rho ], s2[4 p , rho ], s2[q , rho ], s2[q , rho ], 
+           1     1         1     1       1     1       1     2
+ 
+>    s2[2 q , rho ], s2[2 q , rho ], s2qu[p ], s2sq[p ], sisq[p ]}
+           1     1         1     2         1         1         1
+
+In[87]:= %% /. s2[b_. q[1],a_] :> S2[2q[1],a] b/2  // Expand;
+
+In[88]:= % /. S2 :> s2 ;
+
+In[89]:= % //. im^i_ :> -im^(i-2) ;
+
+In[90]:= {Length[%],Variables[%]}
+
+Out[90]= {58, {beta, g, im, Nc, r, c2[p , rho ], c2[2 p , rho ], fhat[p ], 
+                                       1     1         1     1         1
+ 
+>     hat2[p ], productDirac[fnu , fnu ], productDirac[fnu , rho , fnu ], 
+            1                   1     2                   1     1     2
+ 
+>     productDirac[fnu , rho , fnu ], productGen[af , af ], s2[p , rho ], 
+                      1     2     2                1    2       1     1
+ 
+>     s2[2 p , rho ], s2[4 p , rho ], s2[2 q , rho ], s2[2 q , rho ], 
+            1     1         1     1         1     1         1     2
+ 
+>     s2qu[p ], s2sq[p ], sisq[p ]}}
+            1         1         1
+
+In[91]:= %% //. productDiracRules4dim //. traceDiracRules4dim;
+
+In[92]:= (Expand[%] // simplifydelm) //reducerho // rorder ;
+
+In[93]:= % // reducegammaproductDirac // reducegammatraceDirac;
+
+In[94]:= lb[%]
+
+Out[94]= {58, 81000}
+
+In[95]:= Expand[%%] //. productDiracRules4dim //. traceDiracRules4dim;
+
+In[96]:= (Expand[%] // simplifydelm) //reducerho // rorder ;
+
+In[97]:= Variables[%] // Sort
+
+Out[97]= {beta, g, im, Nc, r, c2[p , rho ], c2[2 p , rho ], fhat[p ], 
+                                  1     1         1     1         1
+ 
+>    hat2[p ], productDirac[fnu , fnu ], productDirac[fnu , rho , fnu ], 
+           1                   1     2                   1     1     2
+ 
+>    productDirac[fnu , rho , fnu ], productGen[af , af ], s2[p , rho ], 
+                     1     2     2                1    2       1     1
+ 
+>    s2[2 p , rho ], s2[4 p , rho ], s2[2 q , rho ], s2[2 q , rho ], 
+           1     1         1     1         1     1         1     2
+ 
+>    s2qu[p ], s2sq[p ], sisq[p ]}
+           1         1         1
+
+In[98]:= bl[%]
+
+Out[98]= {{0, 0, 0, 0, 0, 184, 256, 112, 112, 184, 256, 256, 184, 184, 256, 
+ 
+>     256, 256, 256, 112, 112, 112}, 
+ 
+>    {0, 0, 0, 0, 0, 2, 2, 1, 1, 2, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1}}
+
+In[99]:= (Expand[%%%] // simplifydelm // reducerho) //.
+productDiracRules4dim //. traceDiracRules4dim // simplifydelm // reducerho;
+
+In[100]:= {lb[%], Variables[%] // Sort}
+
+Out[100]= {{58, 81000}, {beta, g, im, Nc, r, c2[p , rho ], c2[2 p , rho ], 
+                                                 1     1         1     1
+ 
+>     fhat[p ], hat2[p ], productDirac[fnu , fnu ], 
+            1         1                   1     2
+ 
+>     productDirac[fnu , rho , fnu ], productDirac[fnu , rho , fnu ], 
+                      1     1     2                   1     2     2
+ 
+>     productGen[af , af ], s2[p , rho ], s2[2 p , rho ], s2[4 p , rho ], 
+                   1    2       1     1         1     1         1     1
+ 
+>     s2[2 q , rho ], s2[2 q , rho ], s2qu[p ], s2sq[p ], sisq[p ]}}
+            1     1         1     2         1         1         1
+
+In[101]:= out1 = (ExpandAll[%%] // reducerho // rorder // rorderall) /. r -> 1 /. nDim -> 4;
+
+In[102]:= Select[Variables[out1],(FreeQ[#,p] && FreeQ[#,cprop0] && FreeQ[#,cprop1])&]
+
+Out[102]= {beta, g, im, Nc, productDirac[fnu , fnu ], 
+                                            1     2
+ 
+>    productDirac[fnu , rho , fnu ], productGen[af , af ], s2[2 q , rho ]}
+                     1     1     2                1    2         1     1
+
+In[103]:= ((#/(# /. Table[%[[i]] -> 1,{i,Length[%]}]))& /@ (List @@ out1)) // Union
+
+            2
+           g  productDirac[fnu , fnu ] productGen[af , af ]
+                              1     2               1    2
+Out[103]= {------------------------------------------------, 
+                                  Nc
+ 
+           2
+     beta g  productDirac[fnu , fnu ] productGen[af , af ]
+                             1     2               1    2
+>    -----------------------------------------------------, 
+                              Nc
+ 
+      2
+>    g  Nc productDirac[fnu , fnu ] productGen[af , af ], 
+                           1     2               1    2
+ 
+           2
+>    beta g  Nc productDirac[fnu , fnu ] productGen[af , af ], 
+                                1     2               1    2
+ 
+      2
+     g  im productDirac[fnu , rho , fnu ] productGen[af , af ] 
+                           1     1     2               1    2
+      
+     >   s2[2 q , rho ]
+               1     1
+>    ------------------------------------------------------------------------\
+                                        Nc
+ 
+               2
+>     , (beta g  im productDirac[fnu , rho , fnu ] productGen[af , af ] 
+                                    1     1     2               1    2
+ 
+                               2
+>       s2[2 q , rho ]) / Nc, g  im Nc productDirac[fnu , rho , fnu ] 
+              1     1                                  1     1     2
+ 
+>     productGen[af , af ] s2[2 q , rho ], 
+                   1    2        1     1
+ 
+           2
+>    beta g  im Nc productDirac[fnu , rho , fnu ] productGen[af , af ] 
+                                   1     1     2               1    2
+ 
+>     s2[2 q , rho ]}
+            1     1
+
+In[104]:= varlist = Table[var[i] -> %[[i]],{i,Length[%]}]
+
+                      2
+                     g  productDirac[fnu , fnu ] productGen[af , af ]
+                                        1     2               1    2
+Out[104]= {var[1] -> ------------------------------------------------, 
+                                            Nc
+ 
+                     2
+               beta g  productDirac[fnu , fnu ] productGen[af , af ]
+                                       1     2               1    2
+>    var[2] -> -----------------------------------------------------, 
+                                        Nc
+ 
+                2
+>    var[3] -> g  Nc productDirac[fnu , fnu ] productGen[af , af ], 
+                                     1     2               1    2
+ 
+                     2
+>    var[4] -> beta g  Nc productDirac[fnu , fnu ] productGen[af , af ], 
+                                          1     2               1    2
+ 
+>    var[5] -> 
+ 
+        2
+       g  im productDirac[fnu , rho , fnu ] productGen[af , af ] s2[2 q , rho ]
+                             1     1     2               1    2        1     1
+>      ------------------------------------------------------------------------
+                                          Nc
+ 
+>     , var[6] -> 
+ 
+             2
+>     (beta g  im productDirac[fnu , rho , fnu ] productGen[af , af ] 
+                                  1     1     2               1    2
+ 
+>        s2[2 q , rho ]) / Nc, var[7] -> 
+               1     1
+ 
+       2
+>     g  im Nc productDirac[fnu , rho , fnu ] productGen[af , af ] 
+                               1     1     2               1    2
+ 
+>      s2[2 q , rho ], var[8] -> 
+             1     1
+ 
+            2
+>     beta g  im Nc productDirac[fnu , rho , fnu ] productGen[af , af ] 
+                                    1     1     2               1    2
+ 
+>      s2[2 q , rho ]}
+             1     1
+
+In[105]:= (* Check *)
+
+In[106]:= Reverse[Table[dummy %%%[[i]]-> var[i],{i,Length[%%%]}]];
+
+In[107]:= ((dummy #)& /@ out1) /. %;
+
+In[108]:= SameQ[% /. varlist, out1]
+
+Out[108]= True
+
+In[109]:= intexpr = %%;
+
+In[110]:= % // reducerho // rorder // rorderall;
+
+In[111]:= Variables[%]
+
+Out[111]= {c2[p , rho ], fhat[p ], var[1], s2sq[p ], hat2[p ], sisq[p ], 
+               1     1         1                 1         1         1
+ 
+>    var[2], var[3], var[4], var[5], c2[2 p , rho ], s2[p , rho ], 
+                                           1     1       1     1
+ 
+>    s2[2 p , rho ], s2[4 p , rho ], s2qu[p ], var[6], var[7], var[8]}
+           1     1         1     1         1
+
+In[112]:= Length[%%]
+
+Out[112]= 58
+
+In[113]:= intexpr = Expand[%%%];
+
+In[114]:= FreeQ[intexpr,rho[#]]& /@ {1,2,3,4,5,6,7,8,9,10}
+
+Out[114]= {False, True, True, True, True, True, True, True, True, True}
+
+In[115]:= (If[FreeQ[#,rho[1]],#,4 #]& /@ (%% + dummy)) /. dummy -> 0 ;
+
+In[116]:= Length[%]
+
+Out[116]= 58
+
+In[117]:= Module[{expr = Expand[%%%%], exprtemp = 0, sum = 0, i=1},
+While[i<=Length[expr],
+exprtemp = Take[expr,{i,Min[i+1999,Length[expr]]}];
+exprtemp = Expand[exprtemp] // reducerho // rorder ;
+sum = sum + exprtemp;
+Print["{i=",i,", length[sum]=", Length[sum],"}"];
+i = i + 2000];
+sum ];
+{i=1, length[sum]=58}
+
+In[118]:= intexpr = % ;
+
+In[119]:= (* Save["MyFirstDiagram.m",varlist, intexpr] *)
+
+In[120]:= Module[{i=1,temp,filename,expr=intexpr},
+While[i<=Length[expr], Print[i]; temp=Take[expr,{i,Min[i+39999,Length[expr]]}];
+filename = StringJoin["fortranfiles/namefile_part",ToString[(i+39999)/40000],".f"];
+integrator1[temp,1,filename];
+Close[filename]; i = i + 40000]]
+1
+
+In[121]:= (* When all fortranfiles run we can proceed with the extrapolation of the results to infinite lattice size *)
+
+In[122]:= extrapolate[Table[StringJoin["outfiles/namefile_part",ToString[i],".out"],{i,1}],varlist] ;
+
+NSolve::precw: The precision of the argument function (
+                                  b         c
+    {0.034115414922354488 + a + ----- + ---------, 
+                                15376   236421376
+                                  b         c
+     0.034115486870353900 + a + ----- + ---------, 
+                                15876   252047376
+                                  b         c
+     0.034115555471528773 + a + ----- + ---------}) is less than
+                                16384   268435456
+     WorkingPrecision (50).
+
+NSolve::precw: The precision of the argument function (
+                                  b         c
+    {0.034115339406216652 + a + ----- + ---------, 
+                                14884   221533456
+                                  b         c
+     0.034115414922354488 + a + ----- + ---------, 
+                                15376   236421376
+                                  b         c
+     0.034115486870353900 + a + ----- + ---------}) is less than
+                                15876   252047376
+     WorkingPrecision (50).
+
+NSolve::precw: The precision of the argument function (
+                                  b           c
+    {0.034115414922354488 + a + ----- + -------------, 
+                                15376   3635215077376
+                                  b           c
+     0.034115486870353900 + a + ----- + -------------, 
+                                15876   4001504141376
+                                  b           c
+     0.034115555471528773 + a + ----- + -------------}) is less than
+                                16384   4398046511104
+     WorkingPrecision (50).
+
+General::stop: Further output of NSolve::precw
+     will be suppressed during this calculation.
+
+In[123]:= % /. result[{{{a__},{b__}}}] :> Around[b] ;
+
+In[124]:= Variables[%] // Sort
+
+                                                         -11
+Out[124]= {beta, g, im, Nc, Around[-0.0387333, 1.08635 10   ], 
+ 
+                                 -11                                 -11
+>    Around[-0.0341177, 5.7245 10   ], Around[-0.00918671, 7.33645 10   ], 
+ 
+                                   -11                                -11
+>    Around[-0.00910614, 1.42636 10   ], Around[0.00910614, 1.42636 10   ], 
+ 
+                                  -11                              -11
+>    Around[0.00918671, 7.33645 10   ], Around[0.0341177, 5.7245 10   ], 
+ 
+                                 -11
+>    Around[0.0387333, 1.08635 10   ], productDirac[fnu , fnu ], 
+                                                       1     2
+ 
+>    productDirac[fnu , rho , fnu ], productGen[af , af ], s2[2 q , rho ]}
+                     1     1     2                1    2         1     1
+
+In[125]:= %% /. Around[a_,b_] :> a // Expand ;
+
+In[126]:= Variables[%] // Sort
+
+Out[126]= {beta, g, im, Nc, productDirac[fnu , fnu ], 
+                                            1     2
+ 
+>    productDirac[fnu , rho , fnu ], productGen[af , af ], s2[2 q , rho ]}
+                     1     1     2                1    2         1     1
+
+In[127]:= CONVpart = %% ;
+
+In[128]:= (* Save["MyFirstDiagram.m", CONVpart] *)
+
+In[129]:= TotalExpression = Combinatorial * (DIVpart + CONVpart) /. Combinatorial -> 1 /. div -> 1;
+
+In[130]:= rorder[reducerho[makes2sq[% /.q[1]->p[2]] /.p[2]->q[1]]] // simplifydelm ;
+
+In[131]:= % /. s2[b_. q[1],a_] :> s2[2q[1],a] b/2  // Expand;
+
+In[132]:= %/. productDirac[fnu[1] , rho_ , fnu[2]] * s2[2q[1], rho_] :> qslash /. 
+productDirac[fnu[1] , fnu[2]] -> 1 /.
+productGen[af[1], af[2]] -> 1 /. sisq[q[1]] -> q[1]^2;
+
+In[133]:= Variables[%] // Sort
+
+                                          2
+Out[133]= {beta, g, im, Nc, qslash, Log[q  ]}
+                                         1
+
+In[134]:= Expand[%%] // Rationalize
+
+                      2                   2
+          -0.0341177 g    0.0387333 beta g               2
+Out[134]= ------------- + ----------------- + 0.0341177 g  Nc - 
+               Nc                Nc
+ 
+                                        2
+                     2      0.00532364 g  im qslash
+>    0.0387333 beta g  Nc + ----------------------- - 
+                                      Nc
+ 
+                     2
+     0.0274453 beta g  im qslash               2
+>    --------------------------- - 0.00532364 g  im Nc qslash + 
+                 Nc
+ 
+                                       2                   2
+                     2                g  im qslash   beta g  im qslash
+>    0.0274453 beta g  im Nc qslash + ------------ + ----------------- - 
+                                               2                 2
+                                       16 Nc Pi          32 Nc Pi
+ 
+                 2              2                      2
+     EulerGamma g  im qslash   g  im Nc qslash   beta g  im Nc qslash
+>    ----------------------- - --------------- - -------------------- + 
+                    2                   2                    2
+            32 Nc Pi               16 Pi                32 Pi
+ 
+                 2                 2
+     EulerGamma g  im Nc qslash   g  im qslash Log[4 Pi]
+>    -------------------------- + ---------------------- - 
+                    2                           2
+               32 Pi                    32 Nc Pi
+ 
+                                  2                 2
+      2                          g  im qslash Log[q  ]
+     g  im Nc qslash Log[4 Pi]                     1
+>    ------------------------- - --------------------- + 
+                   2                           2
+              32 Pi                    32 Nc Pi
+ 
+           2                 2     2                    2
+     beta g  im qslash Log[q  ]   g  im Nc qslash Log[q  ]
+                            1                          1
+>    -------------------------- + ------------------------ - 
+                     2                          2
+             32 Nc Pi                      32 Pi
+ 
+           2                    2
+     beta g  im Nc qslash Log[q  ]
+                               1
+>    -----------------------------
+                     2
+                32 Pi
+
+In[135]:= TotalExpression = %%% ;
+
+In[136]:= collect[%%, {im, g^2, qslash, Nc, 1/Nc}]
+
+                      2                   2
+          -0.0341177 g  + 0.0387333 beta g
+Out[136]= --------------------------------- + 
+                         Nc
+ 
+                 2                   2
+>    (0.0341177 g  - 0.0387333 beta g ) Nc + 
+ 
+                                                            2           2
+                                 2                   2     g      beta g
+>    im (Nc qslash (-0.00532364 g  + 0.0274453 beta g  - ------ - ------- + 
+                                                              2        2
+                                                         16 Pi    32 Pi
+ 
+                                           2       2          2       2
+                       2    2             g  Log[q  ]   beta g  Log[q  ]
+           EulerGamma g    g  Log[4 Pi]           1                  1
+>          ------------- - ------------ + ----------- - ----------------) + 
+                   2               2             2                2
+              32 Pi           32 Pi         32 Pi            32 Pi
+ 
+                                                        2           2
+                             2                   2     g      beta g
+>       (qslash (0.00532364 g  - 0.0274453 beta g  + ------ + ------- - 
+                                                          2        2
+                                                     16 Pi    32 Pi
+ 
+                                             2       2          2       2
+                         2    2             g  Log[q  ]   beta g  Log[q  ]
+             EulerGamma g    g  Log[4 Pi]           1                  1
+>            ------------- + ------------ - ----------- + ----------------))\
+                     2               2             2                2
+                32 Pi           32 Pi         32 Pi            32 Pi
+ 
+>         / Nc)
+
+In[137]:= (* Save["MyFirstDiagram.m", TotalExpression] *)
+
+In[138]:= (* Commands for continuum PT *)
+
+In[139]:= hat2[p[1]] hat2[-p[1]+q[1]]^2 hat2[-p[1]+p[2]]^2 hat2[p[2]] hat2[-p[2]+q[1]]
+
+                                          2               2
+Out[139]= hat2[p ] hat2[p ] hat2[-p  + p ]  hat2[-p  + q ]  hat2[-p  + q ]
+                1        2         1    2          1    1          2    1
+
+In[140]:= makedenoms[%]
+
+Out[140]= denoms[1, 2, 2, 1, 1]
+
+In[141]:= reducediamond[%]
+
+Out[141]= inv[-7 + nDim] (-denoms[2, 2, 2, 0, 1] + 
+ 
+>      (-2 (-denoms[2, 3, 0, 1, 1] + denoms[2, 3, 1, 1, 0]) - 
+ 
+>         2 (-denoms[3, 2, 0, 1, 1] + denoms[3, 2, 1, 0, 1])) inv[-6 + nDim]\
+ 
+>       - 2 (denoms[1, 3, 2, 1, 0] - 
+ 
+>         (-3 (-denoms[1, 4, 0, 1, 1] + denoms[1, 4, 1, 1, 0]) + 
+ 
+>            denoms[2, 3, 0, 1, 1] - denoms[2, 3, 1, 0, 1]) inv[-6 + nDim]))
+
+In[142]:= unmakedenoms[%]
+
+                                    2               2               2
+Out[142]= inv[-7 + nDim] (-(hat2[p ]  hat2[-p  + p ]  hat2[-p  + q ]  
+                                  1          1    2          1    1
+ 
+>         hat2[-p  + q ]) + (-2 
+                 2    1
+ 
+                      3                        2
+>          (-(hat2[p ]  hat2[p ] hat2[-p  + q ]  hat2[-p  + q ]) + 
+                    1         2         1    1          2    1
+ 
+                     3                              2
+>            hat2[p ]  hat2[-p  + p ] hat2[-p  + q ]  hat2[-p  + q ]) - 
+                   1          1    2         1    1          2    1
+ 
+                     2                                       3
+>         2 (hat2[p ]  hat2[p ] hat2[-p  + p ] hat2[-p  + q ]  - 
+                   1         2         1    2         1    1
+ 
+                     2                        3
+>            hat2[p ]  hat2[p ] hat2[-p  + q ]  hat2[-p  + q ])) 
+                   1         2         1    1          2    1
+ 
+                                                            2
+>       inv[-6 + nDim] - 2 (hat2[p ] hat2[p ] hat2[-p  + p ]  
+                                  1        2         1    2
+ 
+                         3            2                        3
+>          hat2[-p  + q ]  - (hat2[p ]  hat2[p ] hat2[-p  + q ]  
+                  1    1            1         2         1    1
+ 
+                                       2                              3
+>             hat2[-p  + q ] - hat2[p ]  hat2[-p  + p ] hat2[-p  + q ]  
+                     2    1          1          1    2         1    1
+ 
+>             hat2[-p  + q ] - 3 
+                     2    1
+ 
+                                                              4
+>             (hat2[p ] hat2[p ] hat2[-p  + p ] hat2[-p  + q ]  - 
+                     1        2         1    2         1    1
+ 
+                                                4
+>               hat2[p ] hat2[p ] hat2[-p  + q ]  hat2[-p  + q ])) 
+                      1        2         1    1          2    1
+ 
+>          inv[-6 + nDim]))
+
+In[143]:= hat2[p[1]] hat2[p[1]+q[1]]^2 s2[2 p[1],rho[1]] hat2[p[2]] hat2[p[2]+q[1]]
+
+                                         2
+Out[143]= hat2[p ] hat2[p ] hat2[p  + q ]  hat2[p  + q ] s2[2 p , rho ]
+                1        2        1    1         2    1        1     1
+
+In[144]:= ChetyrkinFormula[%, p[1]]
+
+Out[144]= 
+ 
+                                                                   -3 + nDim/2
+     g[1, 2, 1, 0] hat2[p ] hat2[p  + q ] s2[-2 q , rho ] sisq[-q ]
+                         2        2    1         1     1         1
+>    -------------------------------------------------------------------------
+                                           2
+                                      16 Pi
+
+In[145]:= ChetyrkinFormula[%, p[2]]
+
+                                                               -5 + nDim
+          g[1, 1, 0, 0] g[1, 2, 1, 0] s2[-2 q , rho ] sisq[-q ]
+                                             1     1         1
+Out[145]= --------------------------------------------------------------
+                                           4
+                                     256 Pi
+
+In[146]:= % /. grule
+
+                     nDim       nDim       nDim       nDim            nDim
+Out[146]= (Beta[-1 + ----, -1 + ----] Beta[----, -2 + ----] Gamma[2 - ----] 
+                      2          2          2          2               2
+ 
+                 nDim                           -5 + nDim          nDim
+>      Gamma[3 - ----] s2[-2 q , rho ] sisq[-q ]         ) / (4 Pi)
+                  2           1     1         1
+
+In[147]:= exp[im z p[1]] hat2[p[1]] s2[2p[1],rho[1]]
+
+Out[147]= exp[im z p ] hat2[p ] s2[2 p , rho ]
+                    1        1        1     1
+
+In[148]:= FourierTransformIntegral[%] /.  oneminusx -> (1-x) /. hold[a_] :> a ;
+
+In[149]:= FullSimplify[%]
+
+                   nDim
+          im Gamma[----] s2[2 z, rho ]
+                    2               1
+Out[149]= ----------------------------
+                nDim/2        nDim/2
+            2 Pi       sisq[z]
+
+In[150]:= Quit

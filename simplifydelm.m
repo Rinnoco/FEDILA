@@ -23,11 +23,8 @@ simplifydelm1[a_] :=
 simplifydelm1[expr_Plus] :=
                      simplifydelm1 /@ expr
 
-simplifydelm1[delm[a_,a_]^i_ b_. ] :=
-		      simplifydelm1[ delm[a,a]*b] 		      
-
 simplifydelm1[delm[a_,b__]^i_ c_. ] :=
-		      simplifydelm1[ delm[a,b]*delm[a,a]*Product[delm[{b}[[j]],{b}[[j]]],{j,Length[{b}]}]*c]
+               simplifydelm1[ delm[a,b]*c] 
 
 simplifydelm1[delm[a_,b__,rho[i_]] c_. ] :=
                simplifydelm1[ delm[a,b] (c /. rho[i] -> a) ]  
@@ -60,7 +57,11 @@ simplifydelm1[HoldPattern[delm[a__?(FreeQ[{a},rho]&)]] b_. ] :=
 		 delm[a] simplifydelm1[ 
 	     b /.( (Rule[#, Sort[List[a]][[1]]] )& /@ Drop[ Sort[List[a]],1]) ]]
 
-
+proprule :=
+  { prop[a_,b_,c_] :> 
+          hat2[a] ( delm[b,c] - 4 beta hat2[a] s2[a,b] s2[a,c] ),
+    propG[a_] :> hat2[a], 
+    propF[a_,b_,c_,d_] :> fhat[a] ( m[a] dtrace[c,b] - im dtrace[c,d,b] s2[2a,d])}
 		      
 
 

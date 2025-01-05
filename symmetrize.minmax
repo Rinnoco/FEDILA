@@ -1,0 +1,9 @@
+
+
+symmetrize[ vertice_, min_, max_] := vertice /; min>=max
+symmetrize[ vertice_, min_, max_] := 
+  symmetrize[vertice + Sum[vertice  /. {k[max] -> k[ij],  k[ij] -> k[max], 
+                                        mu[max]-> mu[ij], mu[ij]-> mu[max],
+                                        c[max] -> c[ij],  c[ij] -> c[max]},
+                           {ij, min, max-1} ], 
+             min, max-1 ]  / (max-min+1)

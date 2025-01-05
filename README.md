@@ -64,7 +64,7 @@ for Wolfram Mathematica: https://reference.wolfram.com/language/tutorial/Install
 Additional Notes:
 -----------------
 
-- Detailed installation instructions and further documentation are available in the `docs` folder within the package.
+- Detailed installation instructions and further examples are available in the `examples` folder within the package.
 - Ensure that you follow all guidelines for replacing paths and usernames in `input.m` for proper functioning.
 
 ## Contributing

@@ -7,7 +7,7 @@ collect[expr_,testa_]:= collect[expr,{testa}] /;
 
 collect[expr_,listtesta_List] := 
   Collect[expr, 
-          Select[variablesnew[expr],
+          Select[Variables[expr],
                  (   MemberQ[listtesta,#] 
                   || MemberQ[listtesta,Head[#]]
                   || collect1[listtesta,#] )& 
@@ -16,10 +16,3 @@ collect[expr_,listtesta_List] :=
 
 collect1[listtesta_List,a_] := Or @@ (MatchQ[a,#]& /@ listtesta)
 
-variablesnew[a_]:=Sort[Union[Flatten[variablesnew1[a]]] /. Null -> Sequence[]]
-variablesnew1[a_Plus]:= variablesnew1[List @@ a]
-variablesnew1[a_List]:= variablesnew1 /@ a
-variablesnew1[a_Times]:= variablesnew1[List @@ a]
-variablesnew1[a_Power]:= variablesnew1[a[[1]]]
-variablesnew1[a_]:= Null /; NumberQ[a]
-variablesnew1[a_]:= a

@@ -1,0 +1,9 @@
+symmetrizeauto[ vertice_, min_, max_] := vertice /; 
+                                       !(OddQ[max-min] && max-min > 0)
+symmetrizeauto[ vertice_, min_, max_] := vertice /; min+1==max
+symmetrizeauto[ vertice_, min_, max_] := 
+  symmetrizeauto[vertice + Sum[vertice  /. {k[max-1] -> k[ij], k[ij] -> k[max-1], 
+                                            mu[max-1] -> mu[ij], mu[ij] -> mu[max-1],
+                                            c[max-1] -> c[ij], c[ij] -> c[max-1]}
+                               {ij, min, max-2} ], 
+                 min, max-2 ]  / (max-min)

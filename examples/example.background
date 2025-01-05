@@ -1,0 +1,225 @@
+AppendTo[$Echo,"stdout"]  
+<< /Users/marios/latt_pert/Fedila/input.m
+makestoutvertexU[1,0] /. w -> 0 ;
+1/2 dtrace[fmu[2],mu[1],fmu[3]] * (% * phi2[2k[3], mu[1]] - (% * phi2[-2k[2], mu[1]] /. 
+                            im g -> -im g)) + 
+        (-r/2)* dtrace[fmu[2],fmu[3]] (% * phi2[2k[3], mu[1]] + (% * phi2[-2k[2], mu[1]] /. 
+                            im g -> -im g)) ;
+% /. phi2[a_,b_]*phi2[c_,b_] :> phi2[a+c,b] ;
+% /. delta[k[1]-k[2]+k[3]] phi2[k[1]+a_,b_] :> delta[k[1]-k[2]+k[3]] phi2[k[2]-k[3]+a,b] ;
+% /. phi2[a_,b_] :> c2[a,b] + im s2[a,b] ;
+(Expand[%] /. im^2 -> -1) // canonical // simplifydelm
+Vertex[value] = { {1, 0, 0, 0, 1, 1, 0, 0, 0, 0}, %} ;
+contract[{Vertex[value],Vertex[value]},
+{{0,1},{1,0}},
+{{0,0},{0,0}},
+{{0,0},{0,0}},{{0,0},{0,0}},{{0,0},{0,0}},
+{{0,1},{0,0}},
+{{0,0},{0,0}},{{0,0},{0,0}}] ;
+(% /. openspur -> productGen /. spur -> traceGen) // colorExpand ;
+Expand[%] //. im^i_ :> -im^(i-2) ;
+Variables[%] // Sort
+(#/(# /. delta[__]->1 ))& /@ List @@ %% // Union
+Expand[%%%] /. f_ delta[a_ + b_. p[2]] :>
+(replace[(f delta[a + b p[2]]),{p[2], -a/b}]) // canonical;
+(#/(# /. delta[__]->1 ))& /@ List @@ % // Union
+replace[Expand[%%], {q[2],q[1]}] /. delta[0] -> 1 ;
+canonical[%];
+Variables[%] // Sort
+(#/(# /. dtrace[__]->1 /. propF[___] -> 1))& /@ List @@ %% // Union
+%%% /.
+propF[a_, b_, c_, d_] :>
+fhat[a,m] ((-m + 2 r s2sq[a]) dtrace[c, b] - im dtrace[c, d, b] s2[2 a, d]) /.
+prop[a_, b_, c_] :> hat2[a] (delm[b, c] - 4 beta hat2[a] s2[a, b] s2[a, c]) /.
+propG[a_] :> hat2[a] /.
+propA[a_] :> hat2[a, m] /.
+propg[a_, b_, c_, d_] :> 2 fhat[a] ( 2 r s2sq[a] dtrace[c, b] - im dtrace[c, d, b] s2[2 a, d]) ;
+Expand[%] //. dtrace[a__, i_]*dtrace[i_, b__] :> dtrace[a, b] ;
+(#/(# /. dtrace[__]->1 ))& /@ List @@ % // Union
+Expand[%%] /.
+{dtrace -> productDirac,
+gtrace -> traceDirac} ;
+% //. productDiracRules4dim //. traceDiracRules4dim;
+(Expand[%] // simplifydelm) //reducerho // rorder ;
+% // reducegammaproductDirac // reducegammatraceDirac;
+lb[%]
+Expand[%%] //. productDiracRules4dim //. traceDiracRules4dim;
+(Expand[%] // simplifydelm) //reducerho // rorder ;
+Variables[%] // Sort
+bl[%]
+(Expand[%%%] // simplifydelm // reducerho) //.
+productDiracRules4dim //. traceDiracRules4dim // simplifydelm // reducerho;
+{lb[%], Variables[%] // Sort}
+collect[%%, {fhat[_,_], hat2[_]}]
+list1 = {{m,1},{s2[_,_],1},{hat2[__],-2},{prop[__],-2},{fhat[__],-2},{s2sq[_],2},{sisq[_],2},{s2qu[_],4}} ;
+list2 = {{m,1},{s2[a_. q[1],_],1}} ;
+{countlist[#,list1], countlist[#,list2]}& /@ List @@ Expand[%%%] // Union
+makes2sq[%%%%];
+reducerho[%];
+rorder[%];
+Expand[%] /. m -> 0 /. hat2[a_,0] :> hat2[a] /. fhat[b_,0] -> fhat[b] ; 
+subtractionIRdiv[Expand[%],1] ;
+convergent = % /. div -> 0 ;
+divergent = %% - % ;
+{countlist[#, list1], countlist[#, list2]} & /@ List @@ divergent // Union
+{Length[%%], Variables[%%]}
+(#/(# /. hat2[__]->1 /. fhat[__] -> 1 /. s2[__]->1 /. c2[__]->1 /.
+sisq[__] ->1 /. s2sq[__] -> 1 /. s2qu[__] -> 1 ))& /@ List @@ 
+ExpandAll[divergent] // (reducerho /@ #)& // (rorder /@ #)& // Union
+IntegralsResults
+DIVpart = divergent /. IntegralsResults /.  Log[q1^2] -> Log[q[1]^2] /. 1/q1^2 -> 1/q[1]^2;
+{Length[%], Variables[%]}
+(* Save["MyFirstDiagram.m", DIVpart] *)
+{countlist[#, list1], countlist[#, list2]} & /@ List @@ convergent // Union
+{Length[convergent], Variables[convergent]}
+{count[#,s2sq[q[1]+p[1]]],count[#,s2qu[q[1]+p[1]]]}& /@ List @@ convergent // Union
+convergent /. s2sq[a_+b_]^i_. :> s2sq[a+b]^(i-1)*s2[a+b,rho[20]]^2 ;
+% /. s2sq[a_+b_]^i_. :> s2sq[a+b]^(i-1)*s2[a+b,rho[21]]^2 ;
+% /. s2qu[a_+b_]^i_. :> s2qu[a+b]^(i-1)*s2[a+b,rho[26]]^4 ;
+Select[Variables[%],FreeQ[#,dtrace]&]
+Module[{expr = ExpandAll[%%], exprtemp = 0, sum = 0, i=1},
+       While[i<=Length[expr],
+             exprtemp = Take[expr,{i,Min[i+99,Length[expr]]}] ;
+	     exprtemp =	exprtemp //. s2[a_+ b_,c_] :> s2[a,c] c2[b,c] + c2[a,c] s2[b,c] // Expand ;
+	     exprtemp =	exprtemp //. c2[a_ + b_,c_]:> c2[a,c] c2[b,c] - s2[a,c] s2[b,c] // Expand ;	
+             exprtemp = Select[exprtemp,(countlist[#,list2] <= 1)&];
+             exprtemp = If[countlist[#,list2]>=1,simplifydelm[# /.c2[a_.q[1],b_]:>delm[b,b]],#]& /@ exprtemp ;
+             exprtemp = FixedPoint[replacec2exact, exprtemp];
+             sum = sum + Select[exprtemp,(countlist[#,list2] <= 1)&];
+             Print["{i=",i,", length[sum]=", Length[sum],"}"];
+             i = i + 100]; sum];
+{Length[%], Variables[%]}	     
+If[countlist[#,list2] == 1 , canonical[#/. {hat2[a_+b_. q[1],c___]:>hat2[a],
+ hat2[a_,c__]:>hat2[a], fhat[a_+b_. q[1],c__]:>fhat[a], fhat[a_,c__]:>fhat[a], s2[a_+b_. q[1],c_]:>s2[a,c],
+ s2qu[a_+q[1]]:>s2qu[a], s2sq[a_+q[1]]:>s2sq[a]}], #]& /@ %% ;
+{Length[%], Variables[%]}
+rorder[reducerho[%%]];
+Length[%]
+(* We provide the expressions for the massive propagators *)
+If[countlist[#,list2] < 1, # /. fhat[a_+q[1],m]^i_. :> fhat[a+q[1],m]^(i-1) (fhat[a]-
+(s2[4a+2q[1],rho[20]] s2[2q[1],rho[20]] + m^2 + 4 m r s2sq[a+q[1]]+
+  4r^2 s2[2a+q[1],rho[20]] s2[q[1],rho[20]] *(s2sq[a]+s2sq[a+q[1]]) )*fhat[a]*fhat[a+q[1],m]) //
+Expand // reducerho, #]& /@ Expand[%%%];
+{ByteCount[%],Length[%]}
+If[countlist[#,list2] < 1, # /. hat2[a_+q[1],m]^i_. :> hat2[a+q[1],m]^(i-1) (hat2[a]-
+(4s2[q[1],rho[20]]*s2[2a+q[1],rho[20]] + m^2 )*hat2[a]*hat2[a+q[1],m]) //
+Expand // reducerho, #]& /@ %% ;
+{ByteCount[%],Length[%]}
+If[countlist[#,list2] < 1, # /. fhat[a_+q[1]]^i_. :> fhat[a+q[1]]^(i-1) (fhat[a]-
+(s2[4a+2q[1],rho[20]] s2[2q[1],rho[20]] +
+  4r^2 s2[2a+q[1],rho[20]] s2[q[1],rho[20]] *(s2sq[a]+s2sq[a+q[1]]) )*fhat[a]*fhat[a+q[1]]) //
+Expand // reducerho, #]& /@ %%;
+{ByteCount[%],Length[%]}
+If[countlist[#,list2] < 1, # /. hat2[a_+q[1]]^i_. :> hat2[a+q[1]]^(i-1) (hat2[a]-
+(4s2[q[1],rho[20]]*s2[2a+q[1],rho[20]])*hat2[a]*hat2[a+q[1]]) //
+Expand // reducerho, #]& /@ %% ;
+{ByteCount[%],Length[%]}
+If[countlist[#,list2] < 1, # /. hat2[a_+q[1]]^i_. :> hat2[a+q[1]]^(i-1) (hat2[a]-
+(4s2[q[1],rho[20]]*s2[2a+q[1],rho[20]])*hat2[a]*hat2[a+q[1]]) //
+Expand // reducerho, #]& /@ %% ;
+{ByteCount[%],Length[%]}
+Variables[%%] // Sort
+If[countlist[#,list2] == 1 , canonical[#/. {hat2[a_+b_. q[1],c___]:>hat2[a],
+ hat2[a_,c__]:>hat2[a], fhat[a_+b_. q[1],c__]:>fhat[a],
+ fhat[a_,c__]:>fhat[a], s2[a_+b_. q[1],c_]:>s2[a,c],
+ hat2[a_+b_. q[1]]:>hat2[a],fhat[a_+b_. q[1]]:>fhat[a], 
+ s2qu[a_+q[1]]:>s2qu[a], s2sq[a_+q[1]]:>s2sq[a]}], #]& /@ %%% ;
+{Length[%], Variables[%]}
+{countlist[#, list1], countlist[#, list2]} & /@ List @@ %% // Union
+matchindices[%%%];
+FreeQ[%, matchindices]
+simplifydelm[%%] // reducerho // rorder ;
+{Length[%], Variables[%]}
+Module[{expr = %%, exprtemp = 0, sum = 0, i=1},
+While[i<=Length[expr],
+temp = Take[expr,{i,Min[i+99,Length[expr]]}];
+temp = ((Expand[makeindependent[temp]] // simplifydelm // Expand // reducerho // rorder ));
+Print["makeindependent done!"];
+temp = temp //. s2[a_,b_]^ii_. c2[a_,b_]^j_. :> s2[a,b]^(ii-1) c2[a,b]^(j-1) 1/2 s2[2a,b];
+temp = makes2sq[temp]//. s2sq[a_]^ii_. hat2[a_]^j_. :> 1/4 s2sq[a]^(ii-1) hat2[a]^(j-1) ;
+temp = rorder[reducerho[makes2sq[temp/.q[1]->p[2]] /.p[2]->q[1]]] ;
+temp = temp // reducerho // rorder ;
+sum = sum + temp;
+Print["{i=",i,", length[sum]=", Length[sum],"}"];
+i = i + 100];
+sum ];
+Variables[%]
+%% /. s2[b_. q[1],a_] :> S2[2q[1],a] b/2  // Expand;
+% /. S2 :> s2 ;
+% //. im^i_ :> -im^(i-2) ;
+{Length[%],Variables[%]}
+%% //. productDiracRules4dim //. traceDiracRules4dim;
+(Expand[%] // simplifydelm) //reducerho // rorder ;
+% // reducegammaproductDirac // reducegammatraceDirac;
+lb[%]
+Expand[%%] //. productDiracRules4dim //. traceDiracRules4dim;
+(Expand[%] // simplifydelm) //reducerho // rorder ;
+Variables[%] // Sort
+bl[%]
+(Expand[%%%] // simplifydelm // reducerho) //.
+productDiracRules4dim //. traceDiracRules4dim // simplifydelm // reducerho;
+{lb[%], Variables[%] // Sort}
+out1 = (ExpandAll[%%] // reducerho // rorder // rorderall) /. r -> 1 /. nDim -> 4;
+Select[Variables[out1],(FreeQ[#,p] && FreeQ[#,cprop0] && FreeQ[#,cprop1])&]
+((#/(# /. Table[%[[i]] -> 1,{i,Length[%]}]))& /@ (List @@ out1)) // Union
+varlist = Table[var[i] -> %[[i]],{i,Length[%]}]
+(* Check *)
+Reverse[Table[dummy %%%[[i]]-> var[i],{i,Length[%%%]}]];
+((dummy #)& /@ out1) /. %;
+SameQ[% /. varlist, out1]
+intexpr = %%;
+% // reducerho // rorder // rorderall;
+Variables[%]
+Length[%%]
+intexpr = Expand[%%%];
+FreeQ[intexpr,rho[#]]& /@ {1,2,3,4,5,6,7,8,9,10}
+(If[FreeQ[#,rho[1]],#,4 #]& /@ (%% + dummy)) /. dummy -> 0 ;
+Length[%]
+Module[{expr = Expand[%%%%], exprtemp = 0, sum = 0, i=1},
+While[i<=Length[expr],
+exprtemp = Take[expr,{i,Min[i+1999,Length[expr]]}];
+exprtemp = Expand[exprtemp] // reducerho // rorder ;
+sum = sum + exprtemp;
+Print["{i=",i,", length[sum]=", Length[sum],"}"];
+i = i + 2000];
+sum ];
+intexpr = % ;
+(* Save["MyFirstDiagram.m",varlist, intexpr] *)
+Module[{i=1,temp,filename,expr=intexpr},
+While[i<=Length[expr], Print[i]; temp=Take[expr,{i,Min[i+39999,Length[expr]]}];
+filename = StringJoin["fortranfiles/namefile_part",ToString[(i+39999)/40000],".f"];
+integrator1[temp,1,filename];
+Close[filename]; i = i + 40000]]
+(* When all fortranfiles run we can proceed with the extrapolation of the results to infinite lattice size *)
+extrapolate[Table[StringJoin["outfiles/namefile_part",ToString[i],".out"],{i,1}],varlist] ;
+% /. result[{{{a__},{b__}}}] :> Around[b] ;
+Variables[%] // Sort
+%% /. Around[a_,b_] :> a // Expand ;
+Variables[%] // Sort
+CONVpart = %% ;
+(* Save["MyFirstDiagram.m", CONVpart] *)
+TotalExpression = Combinatorial * (DIVpart + CONVpart) /. Combinatorial -> 1 /. div -> 1;
+rorder[reducerho[makes2sq[% /.q[1]->p[2]] /.p[2]->q[1]]] // simplifydelm ;
+% /. s2[b_. q[1],a_] :> s2[2q[1],a] b/2  // Expand;
+%/. productDirac[fnu[1] , rho_ , fnu[2]] * s2[2q[1], rho_] :> qslash /. 
+productDirac[fnu[1] , fnu[2]] -> 1 /.
+productGen[af[1], af[2]] -> 1 /. sisq[q[1]] -> q[1]^2;
+Variables[%] // Sort
+Expand[%%] // Rationalize
+TotalExpression = %%% ;
+collect[%%, {im, g^2, qslash, Nc, 1/Nc}]
+(* Save["MyFirstDiagram.m", TotalExpression] *)
+(* Commands for continuum PT *)
+hat2[p[1]] hat2[-p[1]+q[1]]^2 hat2[-p[1]+p[2]]^2 hat2[p[2]] hat2[-p[2]+q[1]]
+makedenoms[%]
+reducediamond[%]
+unmakedenoms[%]
+hat2[p[1]] hat2[p[1]+q[1]]^2 s2[2 p[1],rho[1]] hat2[p[2]] hat2[p[2]+q[1]]
+ChetyrkinFormula[%, p[1]]
+ChetyrkinFormula[%, p[2]]
+% /. grule
+exp[im z p[1]] hat2[p[1]] s2[2p[1],rho[1]]
+FourierTransformIntegral[%] /.  oneminusx -> (1-x) /. hold[a_] :> a ;
+FullSimplify[%]
+Quit
+

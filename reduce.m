@@ -1,4 +1,4 @@
-(* Program to reduce the indices a *)
+(* Programma per ridurre gli indici a *)
 
 
 reducea[ expr_Plus] := 
@@ -143,25 +143,3 @@ reducerho[a_] :=
             a /. Inner[Rule,listrho,Array[rho[#]&,Length[listrho]],List]
            ]
 
-(* Programma per ridurre gli indici frho  *)
-
-				
-reducefrho[ expr_Plus] := 
-                  reducefrho /@ expr
- 
-
-reducefrho[expr_Times] := 
-       reducefrho[Select[expr,!FreeQ[#,frho]&]] *
-                         Select[expr,FreeQ[#,frho]&] /;
-                              Or @@ (FreeQ[#,frho]& /@ List @@ expr)     
-
-reducefrho[a_] :=
-      Block[ {listfrho},
-            listfrho = Union[ (a[[ Sequence @@ # ]]) & /@ Position[a,frho[_] ] ];
-            a /. Inner[Rule,listfrho,Array[frho[#]&,Length[listfrho]],List]
-           ]
-
-
-
-
-				

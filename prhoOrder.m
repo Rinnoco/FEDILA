@@ -1,10 +1,8 @@
-(* Programmi per fare il riordinamento, sia negli impulsi, date le
- proprieta' di simmetria, sia negli indici rho *)
- 
-(* Abbiamo fatto la sostituzione: hat -> cap per s2 -> d2 *)
- 
-(* Versione modificata nella regola che calcola porder1 e rorder di una
-   espressione con testa Times *)
+(* Programs for reordering, both in terms of momenta, given the symmetry properties, and in the rho indices *)
+
+(* We made the substitution: hat -> cap for s2 -> d2 *)
+
+(* Modified version in the rule that calculates porder1 and rorder of an expression with the head Times *)
 
 
 porder[expr_] := expr /; FreeQ[expr,p]
@@ -118,6 +116,6 @@ rcompare[list_,listrho_] := Catch[ Block[
                                                         
 rorder[a_] := a            
 
+rorderall[expr_Plus] := rorderall /@ expr
 
-
-
+rorderall[expr_] := Sort[(expr /. Inner[Rule, Union[rhos[expr]], #, List])& /@ Permutations[Union[rhos[expr]]]][[1]]
