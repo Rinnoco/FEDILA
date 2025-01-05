@@ -36,13 +36,11 @@ for Wolfram Mathematica: https://reference.wolfram.com/language/tutorial/Install
 2. Installation:
    Download the FEDILA package from the official repository and follow these steps to install it:
 
-    - Copy the `Fedila.tar.gz` file to your disk and unpack it:
-      > gunzip Fedila.tar.gz
+    - Copy the `FEDILA-main.zip` file to your disk and unpack it:
+      > unzip FEDILA-main.zip
     
-      > tar -xf Fedila.tar.gz
-
-    - Change to the `Fedila` directory:
-      > cd Fedila
+    - Change to the `FEDILA-main` directory:
+      > cd FEDILA-main
 
     - Open the file `input.m` and replace `"username"` with your own username. Save the changes:
       > emacs input.m
@@ -51,6 +49,7 @@ for Wolfram Mathematica: https://reference.wolfram.com/language/tutorial/Install
 3. Configuration:
    For better organization of your calculations, create two additional directories within your project:
    > mkdir fortranfiles
+
    > mkdir outfiles
 
 4. Load the Package:
