@@ -24,11 +24,48 @@ The development of FEDILA not only accelerates research processes but also enabl
 
 ## Installation
 
-Instructions for installing FEDILA will be provided here.
+FEDILA is a Mathematica package designed for automating Feynman diagram calculations on the lattice.
+To use this package, you must first install Mathematica. Refer to the official installation guide
+for Wolfram Mathematica: https://reference.wolfram.com/language/tutorial/InstallingMathematica.html
 
-## Usage
+## Steps to Get Started:
 
-Examples of how to use FEDILA to perform various computations and analyses will be provided here.
+1. System Requirements:
+   Ensure that your system meets the requirements for running Mathematica and that you have an appropriate version installed.
+
+2. Installation:
+   Download the FEDILA package from the official repository and follow these steps to install it:
+
+    - Copy the `Fedila.tar.gz` file to your disk and unpack it:
+      > gunzip Fedila.tar.gz
+    
+      > tar -xf Fedila.tar.gz
+
+    - Change to the `Fedila` directory:
+      > cd Fedila
+
+    - Open the file `input.m` and replace `"username"` with your own username. Save the changes:
+      > emacs input.m
+      [Replace "username" with your username]
+
+3. Configuration:
+   For better organization of your calculations, create two additional directories within your project:
+   > mkdir fortranfiles
+   > mkdir outfiles
+
+4. Load the Package:
+   Open a Mathematica kernel and load the `input.m` file by providing the full path to the `Fedila` folder. Example:
+   In[1]:= << /home/username/Fedila/input.m
+
+   After loading, all the commands required for Feynman diagram calculations are available in the Mathematica kernel.
+   Note that new commands introduced by FEDILA begin with a lowercase letter, unlike Mathematica's native commands,
+   which begin with an uppercase letter.
+
+Additional Notes:
+-----------------
+
+- Detailed installation instructions and further documentation are available in the `docs` folder within the package.
+- Ensure that you follow all guidelines for replacing paths and usernames in `input.m` for proper functioning.
 
 ## Contributing
 
